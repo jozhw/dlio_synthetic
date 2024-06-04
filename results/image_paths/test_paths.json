@@ -1,0 +1,9 @@
+{
+  "paths": [
+    "./assets/test_images/test1.jpg",
+    "./assets/test_images/test2.jpg",
+    "./assets/test_images/test3.jpg",
+    "./assets/test_images/test4.jpg",
+    "./assets/test_images/test5.jpg"
+  ]
+}
