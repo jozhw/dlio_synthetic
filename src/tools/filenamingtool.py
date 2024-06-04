@@ -91,7 +91,7 @@ class FileNamingTool:
         fdatetime = FileNamingTool._get_currenttime()
 
         # concat all of the portions to get complete file name
-        complete_filename = fdatetime + "==" + source + "--" + filename + fext
+        complete_filename = fdatetime + "==" + source + "--" + filename + "." + fext
 
         file_path = dir_path.joinpath(complete_filename)
 
