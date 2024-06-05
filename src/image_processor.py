@@ -306,4 +306,4 @@ if __name__ == "__main__":
 
     imgp = ImageProcessor("polaris", json_path, compression_types)
 
-    imgp.process_sorted_image()
+    imgp.process_rand_image()
