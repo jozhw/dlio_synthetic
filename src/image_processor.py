@@ -298,10 +298,11 @@ class ImageProcessor:
 
 
 if __name__ == "__main__":
-    json_path = "./results/image_paths/test_paths.json"
+    # json_path = "./results/image_paths/test_paths.json"
+    json_path = "./results/image_paths/20240604T121324==2=local--cats-and-dogs-images-all-imgs.json"
 
     compression_types = ["jpg", "npz"]
 
     imgp = ImageProcessor("local", json_path, compression_types)
 
-    imgp.process_image()
+    imgp.process_sorted_image()
