@@ -9,9 +9,10 @@ from PIL import Image
 
 from calculations import Calculations as calc
 from compressions import Compressions as compr
-from tools.filenamingtool import FileNamingTool
-from tools.saving import Saving
-from tools.validations import Validations
+
+from utils.filenamingtool import FileNamingTool
+from utils.saving import Saving
+from utils.validations import Validations
 
 
 # decorator
@@ -299,10 +300,10 @@ class ImageProcessor:
 
 if __name__ == "__main__":
     # json_path = "./results/image_paths/test_paths.json"
-    json_path = "./results/image_paths/20240604T121324==2=local--cats-and-dogs-images-all-imgs.json"
+    json_path = "./results/image_paths/20240604T162417==1=polaris--imagenet-rand-300000.json"
 
     compression_types = ["jpg", "npz"]
 
-    imgp = ImageProcessor("local", json_path, compression_types)
+    imgp = ImageProcessor("polaris", json_path, compression_types)
 
     imgp.process_sorted_image()

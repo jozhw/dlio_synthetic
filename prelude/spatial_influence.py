@@ -14,8 +14,8 @@ src_root = os.path.abspath(os.path.join(project_root, "src"))
 # attach the src too path to access the tools module
 sys.path.append(src_root)
 
-from tools.filenamingtool import FileNamingTool
-from tools.removing import Removing
+from utils.filenamingtool import FileNamingTool
+from utils.removing import Removing
 
 
 class SpatialInfluence:

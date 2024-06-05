@@ -6,8 +6,9 @@ import numpy as np
 from PIL import Image
 
 from calculations import Calculations
-from tools.filenamingtool import FileNamingTool
-from tools.removing import Removing
+
+from utils.filenamingtool import FileNamingTool
+from utils.removing import Removing
 
 
 class Compressions:
