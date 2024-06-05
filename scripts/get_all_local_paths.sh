@@ -23,7 +23,7 @@ paths=()
 datetime=$(date +'%Y%m%dT%H%M%S')
 
 # name of json file for storage
-json_file="$datetime-local-$dir_used-all_imgs.json"
+json_file="$datetime==local-$dir_used-all_imgs.json"
 
 
 # get image path and store to paths array
