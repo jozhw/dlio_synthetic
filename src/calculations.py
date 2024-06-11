@@ -1,7 +1,7 @@
 import math
 import os
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Tuple
 
 import numpy as np
 
@@ -82,3 +82,12 @@ class Calculations:
         # round mean
         mean: int = round(total_sum / total_count)
         return mean
+
+    @staticmethod
+    def calculate_squared_equivalent(dimensions) -> int:
+
+        a = dimensions[0] * dimensions[1]
+
+        rounded_square = int(math.sqrt(a))
+
+        return rounded_square
