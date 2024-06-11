@@ -1,7 +1,7 @@
 import math
 import os
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict
 
 import numpy as np
 
@@ -91,3 +91,87 @@ class Calculations:
         rounded_square = int(math.sqrt(a))
 
         return rounded_square
+
+
+class EntropyCalculator:
+
+    def __init__(self, window_size: int, image: np.ndarray):
+
+        self.window_size = window_size
+        self.image = image
+        self.flattened_image = image.flatten()
+        self.flattened_image_length = len(self.flattened_image)
+        self.dimensions = image.shape
+        self.size_bytes = self.dimensions[0] * self.dimensions[1] * self.dimensions[2]
+        self.occurrences = {}
+
+    def calculate_entropy(self):
+        start = 0
+        # non inclusive, should match the window size since the start is at 0
+        end = self.window_size
+
+        while end <= self.flattened_image_length:
+
+            arr = self.flattened_image[start:end]
+            key = tuple(arr)
+
+            if key in self.occurrences:
+                self.occurrences[key] += 1
+            else:
+                self.occurrences[key] = 1
+
+            start += 1
+            end += 1
+
+        entropy = Calculations.calculate_entropy(self.occurrences)
+
+        return entropy
+
+    def run(self):
+
+        entropy = self.calculate_entropy()
+
+        save_path = Path("./generated_files/compressed_image.npz")
+
+        np.savez_compressed(save_path, self.image)
+
+        compressed_size = os.path.getsize(save_path)
+
+        os.remove(save_path)
+
+        cratio = self.size_bytes / compressed_size
+
+        return (self.window_size, entropy, cratio)
+
+
+if __name__ == "__main__":
+
+    from PIL import Image
+
+    paths = [
+        "./assets/test_images/test1.jpg",
+        "./assets/test_images/test2.jpg",
+        "./assets/test_images/test3.jpg",
+        "./assets/test_images/test4.jpg",
+        "./assets/test_images/test5.jpg",
+    ]
+
+    window_size = 3
+
+    for path in paths:
+
+        image = np.array(Image.open(path)).astype(np.uint8)
+
+        ec = EntropyCalculator(window_size, image)
+
+        result = ec.run()
+
+        print(result)
+
+        # occurrences = Calculations.count_occurrences(image)
+
+        # entropy = Calculations.calculate_entropy(occurrences)
+
+        # confirm_result = (1, entropy)
+
+        # print(confirm_result)
