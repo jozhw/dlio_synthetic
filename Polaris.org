@@ -1,0 +1,38 @@
+#+title: Polaris
+
+* Running on Polaris
+
+** Interactive Mode
+
+Runn the following when logged into Polaris:
+
+=qsub -A DLIO -l select=2 -q debug -l walltime=1:00:00 -l filesystems=home:eagle=
+
+Change the =DLIO=, which is the project name to another project name if needed.
+
+
+To run, use the following code:
+
+Run with the base environment
+
+#+BEGIN_SRC 
+
+module use /soft/modulefiles
+
+module load conda ; conda activate base
+
+
+#+END_SRC
+
+
+Run the program
+
+#+BEGIN_SRC 
+
+
+cd dlio_synthetic
+
+mpiexec -n 128 --ppn 64 python <PATH_TO_SCRIPT>
+
+
+#+END_SRC
