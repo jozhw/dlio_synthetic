@@ -9,7 +9,6 @@ from PIL import Image
 
 from calculations import Calculations as calc
 from compressions import Compressions as compr
-
 from utils.filenamingtool import FileNamingTool
 from utils.saving import Saving
 from utils.validations import Validations
@@ -138,6 +137,65 @@ class ImageProcessor:
         # for the sake of consistency, gray scale will be filtered out
         if len(image.shape) == 2 or image.shape[2] != 3:
             return None
+
+        # calculate the occurrences
+        occurrences: Dict[int, int] = calc.count_occurrences(image)
+        mean: int = calc.calculate_mean_intensity_value(occurrences)
+        entropy: float = calc.calculate_entropy(occurrences)
+
+        total_pixels = dimensions[0] * dimensions[1]
+
+        # the total size is in bytes, assuming an uint8 (range 0-255)
+        uncompressed_size = total_pixels * dimensions[2]
+
+        result: Dict[str, Any] = {
+            "entropy": entropy,
+            "uncompressed_size": uncompressed_size,
+            "uncompressed_height": height,
+            "uncompressed_width": width,
+            "mean_intensity_value": mean,
+        }
+
+        cresult: Dict[str, Any] = compr.compress_and_calculate(
+            filename, image, dimensions, self.compression_types, self.source
+        )
+
+        # append the cresult to result
+        for k, v in cresult.items():
+            result[k] = v
+
+        return filename, result
+
+    # uses self.compression_types
+    @process_images
+    def process_rand_pixel_image(
+        self,
+        path,
+    ) -> Optional[Tuple[str, Dict[str, Any]]]:
+        # get the filename itself without extensions
+        filename, _ = os.path.splitext(os.path.basename(path))
+
+        # add fand to filename
+        filename = "randpixel-" + filename
+
+        # set the values within the numpy array to uint8
+        # may change this sometime in the future
+        # create the image object
+        image: np.ndarray = np.array(Image.open(path)).astype(np.uint8)
+
+        # numpy reads the image in the order of Height, Width, Depth
+        dimensions: Tuple = image.shape
+
+        height: int = dimensions[0]
+        width: int = dimensions[1]
+
+        # even though image processing can handle gray scale,
+        # for the sake of consistency, gray scale will be filtered out
+        if len(image.shape) == 2 or image.shape[2] != 3:
+            return None
+
+        # randomize the object directly
+        np.random.shuffle(image)
 
         # calculate the occurrences
         occurrences: Dict[int, int] = calc.count_occurrences(image)
@@ -300,10 +358,12 @@ class ImageProcessor:
 
 if __name__ == "__main__":
     # json_path = "./results/image_paths/test_paths.json"
-    json_path = "./results/image_paths/20240604T162417==1=polaris--imagenet-rand-300000.json"
+    json_path = (
+        "./results/image_paths/20240604T162417==1=polaris--imagenet-rand-300000.json"
+    )
 
     compression_types = ["jpg", "npz"]
 
     imgp = ImageProcessor("polaris", json_path, compression_types)
 
-    imgp.process_rand_image()
+    imgp.process_rand_pixel_image()
