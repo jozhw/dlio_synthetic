@@ -80,7 +80,7 @@ class ScatterPlots:
 
         plt.show()
 
-    def graph__multiple_separate_entropy_and_compression_ratio(
+    def graph_multiple_separate_entropy_and_compression_ratio(
         self, compression_type: str
     ):
 
@@ -189,9 +189,21 @@ class ScatterPlots:
 
         plt.figure(figsize=(12, 8))
         # graph original images data
-        plt.scatter(entropy, cratio, color="blue", alpha=0.5, label=label1)
+        plt.scatter(
+            entropy,
+            cratio,
+            color="blue",
+            alpha=0.5,
+            label=label1 + " {} Images".format(df.shape[0]),
+        )
         # graph synthetic images data
-        plt.scatter(entropy2, cratio2, color="red", alpha=0.5, label=label2)
+        plt.scatter(
+            entropy2,
+            cratio2,
+            color="red",
+            alpha=0.5,
+            label=label2 + " {} Images".format(df2.shape[0]),
+        )
 
         plt.title(ptitle)
         plt.xlabel("Entropy")
@@ -314,7 +326,7 @@ class ScatterPlots:
         plt.xlabel("Entropy")
         plt.ylabel("Compression Ratio")
         plt.legend(loc="upper left")
-        plt.xlim([0, 3])
+        # plt.xlim([0, 3])
         # plt.ylim([0, 20])
         plt.grid(True)
 
@@ -354,36 +366,40 @@ if __name__ == "__main__":
         "./results/20240604T170147==2c=local--12430-rand-processed-images-results.csv",
     ]
 
-    ScatterPlots.graph_multidata_entropy_and_compression_ratio(
-        paths_multi_local[0],
-        paths_multi_local[1],
-        "Random Pixel Images",
-        paths_multi_local[2],
-        "Random Images",
-        "npz",
-        "local",
-    )
+    # ScatterPlots.graph_multidata_entropy_and_compression_ratio(
+    #    paths_multi_local[0],
+    #    paths_multi_local[1],
+    #    "Random Pixel Images",
+    #    paths_multi_local[2],
+    #    "Random Images",
+    #    "npz",
+    #    "local",
+    # )
 
     single_paths = [
         "./results/20240605T052200==1c=polaris--300000-rand-processed-images-results.csv",
         "./results/20240605T044853==1b=polaris--300000-sorted-processed-images-results.csv",
+        "./results/20240430T121325==1=polaris--results-imagenet-rand-300000.csv",
     ]
 
     # ScatterPlots.graph_entropy_and_compression_ratio(
-    #    single_paths[1], "Sorted Images", "npz", "polaris"
+    #    single_paths[2], "", "npz", "eagleimagenet"
     # )
 
     comparison_paths = [
         "./results/20240604T170147==2c=local--12430-rand-processed-images-results.csv",
         "./results/20240605T052200==1c=polaris--300000-rand-processed-images-results.csv",
+        "./results/20240430T121325==1=polaris--results-imagenet-rand-300000.csv",
+        "./results/20240605T123902==2=local--results-cats-and-dogs-12430.csv",
+        "./results/20240611T205305==polaris--300000-randpixel-processed-images-results.csv",
     ]
 
-    # ScatterPlots.graph_data_comparison_entropy_and_compression_ratio(
-    #    comparison_paths[1],
-    #    "polaris",
-    #    "polaris random",
-    #    comparison_paths[0],
-    #    "local",
-    #    "local random",
-    #    "npz",
-    # )
+    ScatterPlots.graph_data_comparison_entropy_and_compression_ratio(
+        comparison_paths[2],
+        "Eagle Imagenet",
+        "Original",
+        comparison_paths[4],
+        "Eagle Imagenet Modified",
+        "Randomized Pixels",
+        "npz",
+    )
