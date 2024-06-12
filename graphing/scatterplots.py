@@ -387,19 +387,17 @@ if __name__ == "__main__":
     # )
 
     comparison_paths = [
-        "./results/20240604T170147==2c=local--12430-rand-processed-images-results.csv",
-        "./results/20240605T052200==1c=polaris--300000-rand-processed-images-results.csv",
-        "./results/20240430T121325==1=polaris--results-imagenet-rand-300000.csv",
-        "./results/20240605T123902==2=local--results-cats-and-dogs-12430.csv",
-        "./results/20240611T205305==polaris--300000-randpixel-processed-images-results.csv",
+        "./results/20240612T104903==2e=localcatsanddogs--12430-randpixel-processed-images-results.csv",
+        "./results/20240605T123902==2=localcatsanddogs--results-cats-and-dogs-12430.csv",
+        "./results/20240430T121325==1=eagleimagenet--results-imagenet-rand-300000.csv",
     ]
 
     ScatterPlots.graph_data_comparison_entropy_and_compression_ratio(
-        comparison_paths[2],
-        "Eagle Imagenet",
+        comparison_paths[1],
+        "Local Cats and Dogs",
         "Original",
-        comparison_paths[4],
-        "Eagle Imagenet Modified",
+        comparison_paths[0],
+        "Local Cats and Dogs Modified",
         "Randomized Pixels",
         "npz",
     )

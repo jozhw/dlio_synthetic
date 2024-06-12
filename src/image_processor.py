@@ -195,7 +195,13 @@ class ImageProcessor:
             return None
 
         # randomize the object directly
-        np.random.shuffle(image)
+        # since numpy only randomizes based on the axis
+
+        arr = image.reshape((height * width, dimensions[2]))
+
+        np.random.shuffle(arr)
+
+        image = arr.reshape(dimensions)
 
         # calculate the occurrences
         occurrences: Dict[int, int] = calc.count_occurrences(image)
@@ -358,12 +364,10 @@ class ImageProcessor:
 
 if __name__ == "__main__":
     # json_path = "./results/image_paths/test_paths.json"
-    json_path = (
-        "./results/image_paths/20240604T162417==1=polaris--imagenet-rand-300000.json"
-    )
+    json_path = "results/image_paths/20240604T162417==1=eagleimagenet--imagenet-rand-300000.json"
 
     compression_types = ["jpg", "npz"]
 
-    imgp = ImageProcessor("polaris", json_path, compression_types)
+    imgp = ImageProcessor("2e=eagleimagenet", json_path, compression_types)
 
     imgp.process_rand_pixel_image()
