@@ -390,14 +390,17 @@ if __name__ == "__main__":
         "./results/20240612T104903==2e=localcatsanddogs--12430-randpixel-processed-images-results.csv",
         "./results/20240605T123902==2=localcatsanddogs--results-cats-and-dogs-12430.csv",
         "./results/20240430T121325==1=eagleimagenet--results-imagenet-rand-300000.csv",
+        "./results/20240612T165336==1e=eagleimagenet--300000-randpixel-processed-images-results.csv",
+        "./results/20240611T205305==1d=eagleimagenet--300000-randrow-processed-images-results.csv",
+        "./results/20240610T155152==2d=localcatsanddogs--12430-randrow-processed-images-results.csv",
     ]
 
     ScatterPlots.graph_data_comparison_entropy_and_compression_ratio(
         comparison_paths[1],
         "Local Cats and Dogs",
         "Original",
-        comparison_paths[0],
+        comparison_paths[5],
         "Local Cats and Dogs Modified",
-        "Randomized Pixels",
+        "Randomized Rows",
         "npz",
     )
