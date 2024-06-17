@@ -95,9 +95,10 @@ class Calculations:
 
 class EntropyCalculator:
 
-    def __init__(self, window_size: int, image: np.ndarray):
+    def __init__(self, window_size: int, shift_size: int, image: np.ndarray):
 
         self.window_size = window_size
+        self.shift_size = shift_size
         self.image = image
         self.flattened_image = image.flatten()
         self.flattened_image_length = len(self.flattened_image)
@@ -120,8 +121,8 @@ class EntropyCalculator:
             else:
                 self.occurrences[key] = 1
 
-            start += 1
-            end += 1
+            start += self.shift_size
+            end += self.shift_size
 
         entropy = Calculations.calculate_entropy(self.occurrences)
 
@@ -156,17 +157,19 @@ if __name__ == "__main__":
         "./assets/test_images/test5.jpg",
     ]
 
-    window_size = 3
+    window_size = 15
+
+    shift_size = 3
 
     for path in paths:
 
         image = np.array(Image.open(path)).astype(np.uint8)
 
-        ec = EntropyCalculator(window_size, image)
+        ec = EntropyCalculator(window_size, shift_size, image)
 
-        result = ec.run()
+        results = ec.run()
 
-        print(result)
+        print(results)
 
         # occurrences = Calculations.count_occurrences(image)
 

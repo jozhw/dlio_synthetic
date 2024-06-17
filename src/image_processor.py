@@ -8,6 +8,7 @@ from mpi4py import MPI
 from PIL import Image
 
 from calculations import Calculations as calc
+from calculations import EntropyCalculator
 from compressions import Compressions as compr
 from utils.filenamingtool import FileNamingTool
 from utils.saving import Saving
@@ -108,6 +109,14 @@ class ImageProcessor:
             ImageProcessor.ACCEPTED_COMPRESSION_TYPES, self.compression_types
         )
 
+        # determine the entropy classificiation
+
+        self.window_size = 3
+        self.shift_size = 3
+
+        self.entropy_label = "E{}".format(self.window_size)
+        self.shift_label = "shift_size"
+
     def _load_json(self):
         with open(self.json) as f:
             data: Dict = json.load(f)
@@ -139,9 +148,14 @@ class ImageProcessor:
             return None
 
         # calculate the occurrences
+        # this occurrence is still needed because of the mean intensity value
         occurrences: Dict[int, int] = calc.count_occurrences(image)
         mean: int = calc.calculate_mean_intensity_value(occurrences)
-        entropy: float = calc.calculate_entropy(occurrences)
+
+        ec = EntropyCalculator(
+            window_size=self.window_size, shift_size=self.shift_size, image=image
+        )
+        entropy: float = ec.calculate_entropy()
 
         total_pixels = dimensions[0] * dimensions[1]
 
@@ -149,7 +163,8 @@ class ImageProcessor:
         uncompressed_size = total_pixels * dimensions[2]
 
         result: Dict[str, Any] = {
-            "entropy": entropy,
+            self.entropy_label: entropy,
+            self.shift_label: self.shift_size,
             "uncompressed_size": uncompressed_size,
             "uncompressed_height": height,
             "uncompressed_width": width,
@@ -206,7 +221,10 @@ class ImageProcessor:
         # calculate the occurrences
         occurrences: Dict[int, int] = calc.count_occurrences(image)
         mean: int = calc.calculate_mean_intensity_value(occurrences)
-        entropy: float = calc.calculate_entropy(occurrences)
+        ec = EntropyCalculator(
+            window_size=self.window_size, shift_size=self.shift_size, image=image
+        )
+        entropy: float = ec.calculate_entropy()
 
         total_pixels = dimensions[0] * dimensions[1]
 
@@ -214,7 +232,8 @@ class ImageProcessor:
         uncompressed_size = total_pixels * dimensions[2]
 
         result: Dict[str, Any] = {
-            "entropy": entropy,
+            self.entropy_label: entropy,
+            self.shift_label: self.shift_size,
             "uncompressed_size": uncompressed_size,
             "uncompressed_height": height,
             "uncompressed_width": width,
@@ -272,7 +291,12 @@ class ImageProcessor:
         # calculate the occurrences
         occurrences: Dict[int, int] = calc.count_occurrences(image)
         mean: int = calc.calculate_mean_intensity_value(occurrences)
-        entropy: float = calc.calculate_entropy(occurrences)
+
+        ec = EntropyCalculator(
+            window_size=self.window_size, shift_size=self.shift_size, image=image
+        )
+
+        entropy: float = ec.calculate_entropy()
 
         total_pixels = dimensions[0] * dimensions[1]
 
@@ -280,7 +304,8 @@ class ImageProcessor:
         uncompressed_size = total_pixels * dimensions[2]
 
         result: Dict[str, Any] = {
-            "entropy": entropy,
+            self.entropy_label: entropy,
+            self.shift_label: self.shift_size,
             "uncompressed_size": uncompressed_size,
             "uncompressed_height": height,
             "uncompressed_width": width,
@@ -336,7 +361,11 @@ class ImageProcessor:
         # calculate the occurrences
         occurrences: Dict[int, int] = calc.count_occurrences(image)
         mean: int = calc.calculate_mean_intensity_value(occurrences)
-        entropy: float = calc.calculate_entropy(occurrences)
+        ec = EntropyCalculator(
+            window_size=self.window_size, shift_size=self.shift_size, image=image
+        )
+
+        entropy: float = ec.calculate_entropy()
 
         total_pixels = dimensions[0] * dimensions[1]
 
@@ -344,7 +373,8 @@ class ImageProcessor:
         uncompressed_size = total_pixels * dimensions[2]
 
         result: Dict[str, Any] = {
-            "entropy": entropy,
+            self.entropy_label: entropy,
+            self.shift_label: self.shift_size,
             "uncompressed_size": uncompressed_size,
             "uncompressed_height": height,
             "uncompressed_width": width,
