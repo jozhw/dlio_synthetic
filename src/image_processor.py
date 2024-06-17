@@ -396,8 +396,8 @@ if __name__ == "__main__":
     # json_path = "./results/image_paths/test_paths.json"
     json_path = "results/image_paths/20240604T162417==1=eagleimagenet--imagenet-rand-300000.json"
 
-    compression_types = ["jpg", "npz"]
+    compression_types = ["npz"]
 
-    imgp = ImageProcessor("2e=eagleimagenet", json_path, compression_types)
+    imgp = ImageProcessor("eagleimagenet", json_path, compression_types)
 
-    imgp.process_rand_pixel_image()
+    imgp.process_image()
