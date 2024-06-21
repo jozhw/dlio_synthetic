@@ -9,7 +9,7 @@ from mpi4py import MPI
 from PIL import Image
 
 from calculations import Calculations as calc
-from calculations import EntropyCalculator
+from calculations import Entropy, EntropyCalculator
 from compressions import Compressions as compr
 from utils.filenamingtool import FileNamingTool
 from utils.saving import Saving
@@ -112,8 +112,8 @@ class ImageProcessor:
 
         # determine the entropy classificiation
 
-        self.window_size = 3
-        self.shift_size = 3
+        self.window_size = 2
+        self.shift_size = 1
 
         self.entropy_label = "E{}".format(self.window_size)
         self.shift_label = "shift_size"
@@ -460,6 +460,125 @@ class ImageProcessor:
 
         return filename, result
 
+    # uses self.compression_types
+    @process_images
+    def process_resized_imageEn(
+        self,
+        path,
+    ) -> Optional[Tuple[str, Dict[str, Any]]]:
+
+        # get the filename itself without extensions
+        filename, _ = os.path.splitext(os.path.basename(path))
+
+        # set the values within the numpy array to uint8
+        # may change this sometime in the future
+        oimage = cv2.imread(path)
+
+        # cv2 uses BGR, convert to RGB
+        oimage = cv2.cvtColor(oimage, cv2.COLOR_BGR2RGB)
+
+        dim = (224, 224)
+
+        resized = cv2.resize(oimage, dim, interpolation=cv2.INTER_AREA)
+
+        image: np.ndarray = np.array(resized).astype(np.uint8)
+
+        # numpy reads the image in the order of Height, Width, Depth
+        dimensions: Tuple = image.shape
+
+        height: int = dimensions[0]
+        width: int = dimensions[1]
+
+        # even though image processing can handle gray scale,
+        # for the sake of consistency, gray scale will be filtered out
+        if len(image.shape) == 2 or image.shape[2] != 3:
+            return None
+
+        flattened_image = image.flatten()
+        # calculate the occurrences
+
+        E = Entropy.E2(flattened_image)
+
+        total_pixels = dimensions[0] * dimensions[1]
+
+        # the total size is in bytes, assuming an uint8 (range 0-255)
+        uncompressed_size = total_pixels * dimensions[2]
+
+        result: Dict[str, Any] = {
+            self.entropy_label: E,
+            "uncompressed_size": uncompressed_size,
+            "uncompressed_height": height,
+            "uncompressed_width": width,
+        }
+
+        cresult: Dict[str, Any] = compr.compress_and_calculate(
+            filename, image, dimensions, self.compression_types, self.source
+        )
+
+        # append the cresult to result
+        for k, v in cresult.items():
+            result[k] = v
+
+        return filename, result
+
+    # uses self.compression_types
+    @process_images
+    def process_imageEn(
+        self,
+        path,
+    ) -> Optional[Tuple[str, Dict[str, Any]]]:
+
+        # get the filename itself without extensions
+        filename, _ = os.path.splitext(os.path.basename(path))
+
+        # set the values within the numpy array to uint8
+        # may change this sometime in the future
+        oimage = cv2.imread(path)
+
+        # cv2 uses BGR, convert to RGB
+        oimage = cv2.cvtColor(oimage, cv2.COLOR_BGR2RGB)
+
+        image: np.ndarray = np.array(Image.open(path)).astype(np.uint8)
+
+        # numpy reads the image in the order of Height, Width, Depth
+        dimensions: Tuple = image.shape
+
+        height: int = dimensions[0]
+        width: int = dimensions[1]
+
+        # even though image processing can handle gray scale,
+        # for the sake of consistency, gray scale will be filtered out
+        if len(image.shape) == 2 or image.shape[2] != 3:
+            return None
+
+        flattened_image = image.flatten()
+        # calculate the occurrences
+
+        E = Entropy.E2(flattened_image)
+        print(E)
+
+        total_pixels = dimensions[0] * dimensions[1]
+
+        # the total size is in bytes, assuming an uint8 (range 0-255)
+        uncompressed_size = total_pixels * dimensions[2]
+
+        result: Dict[str, Any] = {
+            self.entropy_label: E,
+            "uncompressed_size": uncompressed_size,
+            "uncompressed_height": height,
+            "uncompressed_width": width,
+        }
+
+        cresult: Dict[str, Any] = compr.compress_and_calculate(
+            filename, image, dimensions, self.compression_types, self.source
+        )
+
+        # append the cresult to result
+        for k, v in cresult.items():
+            result[k] = v
+
+        return filename, result
+
 
 if __name__ == "__main__":
     # json_path = "./results/image_paths/test_paths.json"
@@ -469,4 +588,4 @@ if __name__ == "__main__":
 
     imgp = ImageProcessor("eagleimagenet", json_path, compression_types)
 
-    imgp.process_resized_image()
+    imgp.process_imageEn()

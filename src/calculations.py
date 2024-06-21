@@ -145,6 +145,83 @@ class EntropyCalculator:
         return (self.window_size, entropy, cratio)
 
 
+class Entropy:
+
+    @staticmethod
+    def _calcPI(image):
+        """calculating number of I"""
+        N = len(image)
+        P = {}
+        for i in image:
+            if str(i) in P.keys():
+                P[str(i)] += 1.0 / N
+            else:
+                P[str(i)] = 1.0 / N
+        return P
+
+    @staticmethod
+    def _calcPIJ(image):
+        """calculating probility of [IJ], given I already"""
+        N = len(image)
+        PIJ = {}
+        for i in range(N - 1):
+            k = str(image[i]) + "-" + str(image[i + 1])
+            if k in PIJ.keys():
+                PIJ[k] += 1.0 / (N - 1)
+            else:
+                PIJ[k] = 1.0 / (N - 1)
+        return PIJ
+
+    @staticmethod
+    def _calcPIJK(image):
+        N = len(image)
+        PIJK = {}
+        for i in range(N - 2):
+            k = str(image[i]) + "-" + str(image[i + 1]) + "-" + str(image[i + 2])
+            if k in PIJK.keys():
+                PIJK[k] += 1.0 / (N - 2)
+            else:
+                PIJK[k] = 1.0 / (N - 2)
+
+        return PIJK
+
+    @staticmethod
+    def _calcE(P):
+        e = 0.0
+        for k in P.keys():
+            p = P[k]
+            if p > 0.0:
+                e += -p * np.log2(p)
+        return e
+
+    @staticmethod
+    def _F1(image):
+        P = Entropy._calcPI(image)
+        return Entropy._calcE(P)
+
+    @staticmethod
+    def _F2(image):
+        PIJ = Entropy._calcPIJ(image)
+        return Entropy._calcE(PIJ)
+
+    @staticmethod
+    def _F3(image):
+        PIJK = Entropy._calcPIJK(image)
+        return Entropy._calcE(PIJK)
+
+    @staticmethod
+    def E1(image):
+        return Entropy._F1(image)
+
+    @staticmethod
+    def E2(image):
+        return Entropy._F2(image) - Entropy._F1(image)
+
+    @staticmethod
+    def E3(image):
+        return Entropy._F3(image) - Entropy._F2(image)
+
+
 if __name__ == "__main__":
 
     from PIL import Image
@@ -165,11 +242,17 @@ if __name__ == "__main__":
 
         image = np.array(Image.open(path)).astype(np.uint8)
 
-        ec = EntropyCalculator(window_size, shift_size, image)
+        flattened_image = image.flatten()
 
-        results = ec.run()
+        e = Entropy.E3(flattened_image)
 
-        print(results)
+        print(e)
+
+        # ec = EntropyCalculator(window_size, shift_size, image)
+
+        # results = ec.run()
+
+        # print(results)
 
         # occurrences = Calculations.count_occurrences(image)
 
