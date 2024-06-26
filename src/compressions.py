@@ -6,7 +6,6 @@ import numpy as np
 from PIL import Image
 
 from calculations import Calculations
-
 from utils.filenamingtool import FileNamingTool
 from utils.removing import Removing
 
@@ -31,9 +30,12 @@ class Compressions:
 
     @staticmethod
     def _compression_types_wrapper(
-        file_type: str, filename: str, image: np.ndarray, source: str
+        file_type: str,
+        filename: str,
+        image: np.ndarray,
+        source: str,
+        path: str,
     ) -> Path:
-        path = "./generated_files"
         if file_type == "npz":
 
             compressed_image_path = FileNamingTool.generate_filename(
@@ -60,6 +62,8 @@ class Compressions:
         dimensions: Tuple,
         compression_types: List[str],
         source,
+        remove: bool = True,
+        path="./generated_files",
     ) -> Dict[str, Any]:
 
         result: Dict[str, Any] = {}
@@ -75,7 +79,7 @@ class Compressions:
             # run the wrapper, where the compressed image will be generated
             # for the specified compression_type
             compressed_path: Path = Compressions._compression_types_wrapper(
-                compression_type, filename, image, source
+                compression_type, filename, image, source, path
             )
 
             # calculate the compression ratio
@@ -90,6 +94,7 @@ class Compressions:
             result[key_csize] = compressed_size
             result[key_compression_ratio] = compression_ratio
 
-            Removing.remove_compressed_imgs(compressed_path)
+            if remove:
+                Removing.remove_compressed_imgs(compressed_path)
 
         return result
