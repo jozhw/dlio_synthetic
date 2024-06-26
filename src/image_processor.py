@@ -112,11 +112,11 @@ class ImageProcessor:
 
         # determine the entropy classificiation
 
-        self.window_size = 3
+        self.window_size = 1
         self.shift_size = 1
 
-        self.entropy_label = "E{}_red".format(self.window_size)
-        self.shift_label = "shift_size"
+        self.entropy_label = "E{}".format(self.window_size)
+        self.shift_label = "S{}".format(self.shift_size)
 
     def _load_json(self):
         with open(self.json) as f:
@@ -153,9 +153,7 @@ class ImageProcessor:
         occurrences: Dict[int, int] = calc.count_occurrences(image)
         mean: int = calc.calculate_mean_intensity_value(occurrences)
 
-        ec = EntropyCalculator(
-            window_size=self.window_size, shift_size=self.shift_size, image=image
-        )
+        ec = EntropyCalculator(window_size=1, shift_size=1, image=image)
         entropy: float = ec.calculate_entropy()
 
         total_pixels = dimensions[0] * dimensions[1]
@@ -165,7 +163,6 @@ class ImageProcessor:
 
         result: Dict[str, Any] = {
             self.entropy_label: entropy,
-            self.shift_label: self.shift_size,
             "uncompressed_size": uncompressed_size,
             "uncompressed_height": height,
             "uncompressed_width": width,
@@ -588,4 +585,4 @@ if __name__ == "__main__":
 
     imgp = ImageProcessor("eagleimagenet", json_path, compression_types)
 
-    imgp.process_imageEn()
+    imgp.process_image()
