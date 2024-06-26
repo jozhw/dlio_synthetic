@@ -3,6 +3,7 @@ import sys
 from typing import Dict, List
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -148,22 +149,30 @@ class ScatterPlots:
 
     @staticmethod
     def graph_data_comparison_entropy_and_compression_ratio(
+        func,
         data1: str,
         source1: str,
         label1: str,
+        entropy_label: str,
+        label_color: str,
         data2: str,
         source2: str,
         label2: str,
+        entropy_label2: str,
+        label_color2: str,
         compression_type: str,
     ):
         # if it is a synthetic image, then the naming of the file should
         # have synthetic in it
 
+        x = np.array(np.arange(0.1, 8, 0.1))
+        y = func(x)
+
         df = pd.read_csv(data1)
         df2 = pd.read_csv(data2)
         num_rows = df.shape[0] + df2.shape[0]
 
-        fname = "{}-{}-and-{}-imgs-entropy-and-{}-compression-ratio-plot.png".format(
+        fname = "{}-{}-and-{}-imgs-entropy-and-{}-compression-ratio-plot".format(
             num_rows, source1, source2, compression_type
         )
         ptitle = "{} and {} Image Entropy and Compression Ratio for {} Images".format(
@@ -184,15 +193,15 @@ class ScatterPlots:
         cratio = df[cr_name]
         cratio2 = df2[cr_name]
 
-        entropy = df["entropy"]
-        entropy2 = df2["entropy"]
+        entropy = df[entropy_label]
+        entropy2 = df2[entropy_label2]
 
-        plt.figure(figsize=(12, 8))
+        plt.figure(figsize=(16, 9))
         # graph original images data
         plt.scatter(
             entropy,
             cratio,
-            color="blue",
+            color=label_color,
             alpha=0.5,
             label=label1 + " {} Images".format(df.shape[0]),
         )
@@ -200,19 +209,26 @@ class ScatterPlots:
         plt.scatter(
             entropy2,
             cratio2,
-            color="red",
+            color=label_color2,
             alpha=0.5,
             label=label2 + " {} Images".format(df2.shape[0]),
         )
 
+        plt.plot(
+            x,
+            y,
+            label="Theoretical (8/En)",
+            color="green",
+            linestyle="dashed",
+        )
         plt.title(ptitle)
         plt.xlabel("Entropy")
         plt.ylabel("Compression Ratio")
 
-        # plt.xlim([5, 7])
-        # plt.ylim([0, 5])
+        plt.xlim([0, 7.5])
+        plt.ylim([0, 20])
 
-        plt.legend(loc="upper left")
+        plt.legend(loc="upper right")
         plt.grid(True)
 
         plt.savefig(save_fname)
@@ -294,7 +310,7 @@ class ScatterPlots:
         df = pd.read_csv(data)
         num_rows = df.shape[0]
 
-        fname = "{}-entropy-and-{}-compression-ratio-plot.png".format(
+        fname = "{}-entropy-and-{}-compression-ratio-plot".format(
             num_rows, compression_type
         )
         ptitle = "Entropy and Compression Ratio for {} Images".format(
@@ -334,73 +350,98 @@ class ScatterPlots:
 
         plt.show()
 
+    @staticmethod
+    def theoretical_maximumCr(x):
+        return 8 / x
+
+    @staticmethod
+    def graph_maximum_scatterplot(
+        func, entropy_label, data, data_name, compression_type, source
+    ):
+
+        x = np.array(np.arange(0.1, 8, 0.1))
+        y = func(x)
+
+        df = pd.read_csv(data)
+        num_rows = df.shape[0]
+
+        fname = "{}-entropy-and-{}-compression-ratio-plot".format(
+            num_rows, compression_type
+        )
+        ptitle = "Entropy and Compression Ratio for {} Images".format(
+            num_rows, compression_type
+        )
+
+        save_fname = FileNamingTool.generate_filename(
+            "./results/plots", fname, "png", source
+        )
+
+        # get the specific name of the compression_ratio, which the data
+        # has the first part of the naming be the extension of the compresse
+        # file
+        cr_name = "{}_compression_ratio".format(compression_type)
+
+        # the o prefix indicates original and the s indicates synthetic
+
+        cratio = df[cr_name]
+
+        entropy = df[entropy_label]
+
+        plt.figure(figsize=(12, 8))
+
+        # graph images data
+        plt.scatter(entropy, cratio, color="blue", alpha=0.5, label=data_name)
+        # graph synthetic images data
+        plt.plot(
+            x,
+            y,
+            label="Theoretical (8/{})".format(entropy_label),
+            color="red",
+            linestyle="dashed",
+        )
+
+        plt.title(ptitle)
+        plt.xlabel("Entropy ({})".format(entropy_label))
+        plt.ylabel("Compression Ratio")
+        plt.legend(loc="upper right")
+        # plt.xlim([0, 3])
+        # plt.ylim([0, 20])
+        plt.grid(True)
+
+        plt.savefig(save_fname)
+
+        plt.show()
+
 
 if __name__ == "__main__":
-    paths = {
-        "polaris": [
-            "./results/20240527T191348==1a=polaris--30000-synthetic-imgs-results__jpg_npz.csv"
-        ]
-    }
-
-    # toGraph = ScatterPlots(paths)
-    # toGraph.graph_multiple_separate_entropy_and_compression_ratio("npz")
-
-    paths_combined = [
-        "./results/20240430T121325==1=polaris--results-imagenet-rand-300000.csv",
-        "./results/20240527T191348==1a=polaris--30000-synthetic-imgs-results__jpg_npz.csv",
-    ]
-
-    # ScatterPlots.graph_original_and_synthetic_combined_entropy_and_compression_ratio(
-    #    paths_combined[0], paths_combined[1], "npz", "polaris"
-    # )
-
-    paths_multi_polaris = [
-        "./results/20240430T121325==1=polaris--results-imagenet-rand-300000.csv",
-        "./results/20240605T044853==1b=polaris--300000-sorted-processed-images-results.csv",
-        "./results/20240605T052200==1c=polaris--300000-rand-processed-images-results.csv",
-    ]
-
-    paths_multi_local = [
-        "./results/20240605T123902==2=local--results-cats-and-dogs-12430.csv",
-        "./results/20240610T155152==2d=local--12430-randpixel-processed-images-results.csv",
-        "./results/20240604T170147==2c=local--12430-rand-processed-images-results.csv",
-    ]
-
-    # ScatterPlots.graph_multidata_entropy_and_compression_ratio(
-    #    paths_multi_local[0],
-    #    paths_multi_local[1],
-    #    "Random Pixel Images",
-    #    paths_multi_local[2],
-    #    "Random Images",
-    #    "npz",
-    #    "local",
-    # )
-
-    single_paths = [
-        "./results/20240605T052200==1c=polaris--300000-rand-processed-images-results.csv",
-        "./results/20240605T044853==1b=polaris--300000-sorted-processed-images-results.csv",
-        "./results/20240430T121325==1=polaris--results-imagenet-rand-300000.csv",
-    ]
-
-    # ScatterPlots.graph_entropy_and_compression_ratio(
-    #    single_paths[2], "", "npz", "eagleimagenet"
-    # )
 
     comparison_paths = [
-        "./results/20240612T104903==2e=localcatsanddogs--12430-randpixel-processed-images-results.csv",
         "./results/20240605T123902==2=localcatsanddogs--results-cats-and-dogs-12430.csv",
         "./results/20240430T121325==1=eagleimagenet--results-imagenet-rand-300000.csv",
-        "./results/20240612T165336==1e=eagleimagenet--300000-randpixel-processed-images-results.csv",
-        "./results/20240611T205305==1d=eagleimagenet--300000-randrow-processed-images-results.csv",
-        "./results/20240610T155152==2d=localcatsanddogs--12430-randrow-processed-images-results.csv",
+        "./results/20240620T141442==2i--12430-e2-processed-images-results.csv",
+        "./results/20240621T010116==2j--12430-e3-processed-images-results.csv",
     ]
 
     ScatterPlots.graph_data_comparison_entropy_and_compression_ratio(
-        comparison_paths[1],
-        "Local Cats and Dogs",
-        "Original",
-        comparison_paths[5],
-        "Local Cats and Dogs Modified",
-        "Randomized Rows",
+        ScatterPlots.theoretical_maximumCr,
+        comparison_paths[2],
+        "Local Cats and Dogs (E2)",
+        "E2",
+        "E2",
+        "red",
+        comparison_paths[3],
+        "Local Cats and Dogs (E3)",
+        "E3",
+        "E3",
+        "blue",
         "npz",
     )
+
+    # ScatterPlots.graph_maximum_scatterplot(
+    #    ScatterPlots.theoretical_maximumCr,
+    #    "E2",
+    #    comparison_paths[2],
+    #    "Local Cats and Dogs (E2)",
+    #    "npz",
+    #    "localcatsanddogs",
+    # )
