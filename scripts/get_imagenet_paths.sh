@@ -34,7 +34,7 @@ jpg_files=$(find "$IMAGENET_DIR" -type f -name '*.JPEG' | shuf -n "$num_img_path
 datetime=$(date +'%Y%m%dT%H%M%S')
 
 # Generate JSON file name
-json_file="$datetime-polaris-imagenet-rand-$num_img_paths.json"
+json_file="$datetime--polaris-imagenet-rand-$num_img_paths.json"
 
 # Create directory if it doesn't exist
 output_dir="results/image_paths"
