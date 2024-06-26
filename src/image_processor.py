@@ -112,7 +112,7 @@ class ImageProcessor:
 
         # determine the entropy classificiation
 
-        self.window_size = 2
+        self.window_size = 3
         self.shift_size = 1
 
         self.entropy_label = "E{}_red".format(self.window_size)
@@ -553,7 +553,7 @@ class ImageProcessor:
 
         red_channel = image[:, :, 0].flatten()
 
-        E = Entropy.E2(red_channel)
+        E = Entropy.E3(red_channel)
 
         total_pixels = dimensions[0] * dimensions[1]
 
