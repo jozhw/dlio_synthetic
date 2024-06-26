@@ -550,7 +550,7 @@ class ImageProcessor:
 
         red_channel = image[:, :, 0].flatten()
 
-        E = Entropy.E3(red_channel)
+        E = Entropy.E1(red_channel)
 
         total_pixels = dimensions[0] * dimensions[1]
 
@@ -585,4 +585,4 @@ if __name__ == "__main__":
 
     imgp = ImageProcessor("eagleimagenet", json_path, compression_types)
 
-    imgp.process_image()
+    imgp.process_imageEn()
