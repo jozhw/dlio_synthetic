@@ -115,7 +115,7 @@ class ImageProcessor:
         self.window_size = 2
         self.shift_size = 1
 
-        self.entropy_label = "E{}".format(self.window_size)
+        self.entropy_label = "E{}_red".format(self.window_size)
         self.shift_label = "shift_size"
 
     def _load_json(self):
@@ -551,11 +551,9 @@ class ImageProcessor:
         if len(image.shape) == 2 or image.shape[2] != 3:
             return None
 
-        flattened_image = image.flatten()
-        # calculate the occurrences
+        red_channel = image[:, :, 0].flatten()
 
-        E = Entropy.E2(flattened_image)
-        print(E)
+        E = Entropy.E2(red_channel)
 
         total_pixels = dimensions[0] * dimensions[1]
 
@@ -582,7 +580,9 @@ class ImageProcessor:
 
 if __name__ == "__main__":
     # json_path = "./results/image_paths/test_paths.json"
-    json_path = "results/image_paths/20240604T162417==1=eagleimagenet--imagenet-rand-300000.json"
+    json_path = (
+        "results/image_paths/20240625T202523=3=eagleimagenet--imagenet-rand-30000.json"
+    )
 
     compression_types = ["npz"]
 
