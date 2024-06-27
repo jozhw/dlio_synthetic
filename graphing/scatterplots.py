@@ -16,7 +16,7 @@ sys.path.append(src_root)
 from utils.filenamingtool import FileNamingTool
 
 
-class ScatterPlots:
+class EntropyCompressionRatioPlots:
     """
 
     Args:
@@ -89,7 +89,7 @@ class ScatterPlots:
 
             for path in paths:
 
-                ScatterPlots._graph_entropy_and_compression_ratio(
+                EntropyCompressionRatioPlots._graph_entropy_and_compression_ratio(
                     path, source, compression_type=compression_type
                 )
 
@@ -225,7 +225,7 @@ class ScatterPlots:
         plt.xlabel("Entropy")
         plt.ylabel("Compression Ratio")
 
-        plt.xlim([0, 7.5])
+        plt.xlim([0, 8])
         plt.ylim([0, 20])
 
         plt.legend(loc="upper right")
@@ -404,7 +404,7 @@ class ScatterPlots:
         plt.xlabel("Entropy ({})".format(entropy_label))
         plt.ylabel("Compression Ratio")
         plt.legend(loc="upper right")
-        # plt.xlim([0, 3])
+        # plt.xlim([0, 8])
         # plt.ylim([0, 20])
         plt.grid(True)
 
@@ -418,18 +418,21 @@ if __name__ == "__main__":
     comparison_paths = [
         "./results/20240605T123902==2=localcatsanddogs--results-cats-and-dogs-12430.csv",
         "./results/20240430T121325==1=eagleimagenet--results-imagenet-rand-300000.csv",
-        "./results/20240620T141442==2i--12430-e2-processed-images-results.csv",
+        "./results/20240626T182026==2k--12430-e1-redchannel-processed-images-results.csv",
+        "./results/20240626T184532==2l--12430-e2-redchannel-processed-images-results.csv",
+        "./results/20240620T211256==2i--12430-e2-processed-images-results.csv",
+        "./results/20240626T195821==2m--12430-e3-redchannel-processed-images-results.csv",
         "./results/20240621T010116==2j--12430-e3-processed-images-results.csv",
     ]
 
-    ScatterPlots.graph_data_comparison_entropy_and_compression_ratio(
-        ScatterPlots.theoretical_maximumCr,
-        comparison_paths[2],
-        "Local Cats and Dogs (E2)",
-        "E2",
-        "E2",
+    EntropyCompressionRatioPlots.graph_data_comparison_entropy_and_compression_ratio(
+        EntropyCompressionRatioPlots.theoretical_maximumCr,
+        comparison_paths[5],
+        "Local Cats and Dogs (E3)",
+        "E3_red",
+        "E3_red",
         "red",
-        comparison_paths[3],
+        comparison_paths[6],
         "Local Cats and Dogs (E3)",
         "E3",
         "E3",

@@ -112,10 +112,10 @@ class ImageProcessor:
 
         # determine the entropy classificiation
 
-        self.window_size = 1
+        self.window_size = 3
         self.shift_size = 1
 
-        self.entropy_label = "E{}".format(self.window_size)
+        self.entropy_label = "E{}_red".format(self.window_size)
         self.shift_label = "S{}".format(self.shift_size)
 
     def _load_json(self):
@@ -550,7 +550,7 @@ class ImageProcessor:
 
         red_channel = image[:, :, 0].flatten()
 
-        E = Entropy.E1(red_channel)
+        E = Entropy.E3(red_channel)
 
         total_pixels = dimensions[0] * dimensions[1]
 
@@ -577,12 +577,10 @@ class ImageProcessor:
 
 if __name__ == "__main__":
     # json_path = "./results/image_paths/test_paths.json"
-    json_path = (
-        "results/image_paths/20240625T202523==3=eagleimagenet--imagenet-rand-30000.json"
-    )
+    json_path = "results/image_paths/20240604T121324==2=localcatsanddogs--cats-and-dogs-images-all-imgs.json"
 
     compression_types = ["npz"]
 
-    imgp = ImageProcessor("eagleimagenet", json_path, compression_types)
+    imgp = ImageProcessor("localcatsanddogs", json_path, compression_types)
 
     imgp.process_imageEn()
