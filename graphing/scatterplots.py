@@ -462,37 +462,80 @@ class EntropyCompressionRatioPlots:
 
         plt.show()
 
+    @staticmethod
+    def graph_original_and_synthetic_compression_ratio(
+        original_data: str, synthetic_data: str, compression_type: str, source: str
+    ):
+        def function(x):
+            return x
+
+        x = np.array(np.arange(0.1, 8, 0.1))
+        y = function(x)
+        # if it is a synthetic image, then the naming of the file should
+        # have synthetic in it
+
+        odf = pd.read_csv(original_data)
+        sdf = pd.read_csv(synthetic_data)
+        num_rows = odf.shape[0]
+
+        fname = "{}-original-and-synthetic-imgs-entropy-and-{}-compression-ratio-plot.png".format(
+            num_rows, compression_type
+        )
+        ptitle = "Original and Synthetic Lossless (Deflate) Compression Ratios for {} Images".format(
+            num_rows, compression_type
+        )
+
+        save_fname = FileNamingTool.generate_filename(
+            "./results/plots", fname, "png", source
+        )
+
+        # get the specific name of the compression_ratio, which the data
+        # has the first part of the naming be the extension of the compresse
+        # file
+        cr_name = "{}_compression_ratio".format(compression_type)
+
+        # the o prefix indicates original and the s indicates synthetic
+
+        ocratio = odf[cr_name]
+        scratio = sdf[cr_name]
+
+        ocr = odf["npz_compression_ratio"]
+        scr = sdf["npz_compression_ratio"]
+
+        plt.figure(figsize=(12, 8))
+        # graph original images data
+        plt.scatter(ocr, scr, color="blue", alpha=0.5)
+        # graph synthetic images data
+
+        plt.plot(
+            x,
+            y,
+            label="y=x",
+            color="red",
+            linestyle="dashed",
+        )
+        plt.title(ptitle)
+        plt.xlabel("Compression Ratio of Original")
+        plt.ylabel("Compression Ratio of Synthetic")
+
+        plt.xlim([1, 7])
+        plt.ylim([1, 7])
+
+        plt.legend(loc="lower right")
+        plt.grid(True)
+
+        plt.savefig(save_fname)
+
+        plt.show()
+
 
 if __name__ == "__main__":
 
     comparison_paths = [
-        "./results/20240605T123902==2=localcatsanddogs--results-cats-and-dogs-12430.csv",
-        "./results/20240430T121325==1=eagleimagenet--results-imagenet-rand-300000.csv",
-        "./results/20240626T195539==3a--30000-e1-redchannel-processed-images-results.csv",
-        "./results/20240626T021406==3b--30000-e2-redchannel-processed-images-results.csv",
-        "./results/20240626T023210==3c--30000-e3-redchannel-processed-images-results.csv",
+        "./results/20240626T192336==3=eagleimagenet--30000-processed-images-results.csv",
+        "./results/20240626T224056==3d--29524-processed-synthetic-images-results.csv",
     ]
 
-    EntropyCompressionRatioPlots.graph_data_comparison_entropy_and_compression_ratio(
-        EntropyCompressionRatioPlots.theoretical_maximumCr,
-        comparison_paths[3],
-        "Imagenet (E2)",
-        "E2_red",
-        "E2_red",
-        "blue",
-        comparison_paths[4],
-        "Imagenet (E3)",
-        "E3_red",
-        "E3_red",
-        "green",
-        "npz",
+    EntropyCompressionRatioPlots.graph_original_and_synthetic_compression_ratio(
+        comparison_paths[0], comparison_paths[1], "npz", "imagenet"
     )
-
-    # ScatterPlots.graph_maximum_scatterplot(
-    #    ScatterPlots.theoretical_maximumCr,
-    #    "E2",
-    #    comparison_paths[2],
-    #    "Local Cats and Dogs (E2)",
-    #    "npz",
-    #    "localcatsanddogs",
-    # )
