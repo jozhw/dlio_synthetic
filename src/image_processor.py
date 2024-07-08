@@ -89,11 +89,48 @@ def process_images(method):
     return wrapper
 
 
+def process_images_nonanalysis(method):
+
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+
+        comm = MPI.COMM_WORLD
+        rank: int = comm.Get_rank()
+        size: int = comm.Get_size()
+
+        # only the 0th rank can load the data
+        if rank == 0:
+            data = self._load_json()
+            paths = data["paths"]
+        else:
+            paths = None
+
+        # broadcast paths to all nodes
+        paths = comm.bcast(paths, root=0)
+
+        # distribute the paths across processes
+        paths_per_process = [[] for _ in range(size)]
+        for i, path in enumerate(paths):
+            paths_per_process[i % size].append(path)
+
+        # each process works on its assigned paths
+        for path in paths_per_process[rank]:
+            method(self, path)
+
+    return wrapper
+
+
 class ImageProcessor:
 
     ACCEPTED_COMPRESSION_TYPES = ["npz", "jpg"]
 
-    def __init__(self, source: str, json_file: str, compression_types: List[str]):
+    def __init__(
+        self,
+        source: str,
+        json_file: str,
+        compression_types: List[str],
+        compressed_save="./generated_files",
+    ):
         # where the data comes from
         # for simplicity, the usecases for imagenet dataset on polaris is named polaris
         # the images collected locally will be named local
@@ -117,6 +154,8 @@ class ImageProcessor:
 
         self.entropy_label = "E{}_red".format(self.window_size)
         self.shift_label = "S{}".format(self.shift_size)
+
+        self.compressed_save = compressed_save
 
     def _load_json(self):
         with open(self.json) as f:
@@ -170,7 +209,7 @@ class ImageProcessor:
         }
 
         cresult: Dict[str, Any] = compr.compress_and_calculate(
-            filename, image, dimensions, self.compression_types, self.source
+            filename, image, dimensions, self.compression_types, self.compressed_save
         )
 
         # append the cresult to result
@@ -178,6 +217,31 @@ class ImageProcessor:
             result[k] = v
 
         return filename, result
+
+    # uses self.compression_types
+    @process_images_nonanalysis
+    def process_image_nonanalysis(
+        self,
+        path,
+    ) -> int:
+
+        # get the filename itself without extensions
+        filename, _ = os.path.splitext(os.path.basename(path))
+
+        # set the values within the numpy array to uint8
+        # may change this sometime in the future
+        image: np.ndarray = np.array(Image.open(path)).astype(np.uint8)
+
+        # even though image processing can handle gray scale,
+        # for the sake of consistency, gray scale will be filtered out
+        if len(image.shape) == 2 or image.shape[2] != 3:
+            return 1
+
+        compr.compress(
+            filename, image, self.compression_types, self.compressed_save, remove=False
+        )
+
+        return 0
 
     # uses self.compression_types
     @process_images
@@ -577,10 +641,17 @@ class ImageProcessor:
 
 if __name__ == "__main__":
     # json_path = "./results/image_paths/test_paths.json"
-    json_path = "results/image_paths/20240604T121324==2=localcatsanddogs--cats-and-dogs-images-all-imgs.json"
+    json_path = "../results/image_paths/20240625T202523==3=eagleimagenet--imagenet-rand-30000.json"
 
     compression_types = ["npz"]
 
-    imgp = ImageProcessor("localcatsanddogs", json_path, compression_types)
+    compressed_save = "./generated_files/original/"
 
-    imgp.process_imageEn()
+    imgp = ImageProcessor(
+        "3=eagleimagenet",
+        json_path,
+        compression_types,
+        compressed_save=compressed_save,
+    )
+
+    imgp.process_image_nonanalysis()
