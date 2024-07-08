@@ -1,5 +1,5 @@
 import math
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 
 import numpy as np
 import pandas as pd
@@ -92,11 +92,14 @@ class DeflateDataGenerator:
 class DataGenerator_v1:
     ACCEPTED_COMPRESSION_TYPES = ["npz", "jpg"]
 
-    def __init__(self, data_path, compression_types, source):
+    def __init__(
+        self, data_path, compression_types, source, save_path="./generated_files"
+    ):
 
         self.data_path = data_path
         self.compression_types = compression_types
         self.source = source
+        self.save_path = save_path
 
     def _validations(self):
         Validations.validate_compression_types(
@@ -142,7 +145,7 @@ class DataGenerator_v1:
             )
 
             result = Compressions.compress_and_calculate(
-                sfile_name, synthetic_image, sdimensions, ["npz"], self.source
+                sfile_name, synthetic_image, sdimensions, ["npz"], self.save_path
             )
 
             result["uncompressed_size"] = ssize
@@ -180,18 +183,102 @@ class DataGenerator_v1:
 
             Saving.save_to_csv(flat_results, filepath)
 
+    def generate_deflate_nonanalysis(self):
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+        size = comm.Get_size()
+
+        if rank == 0:
+            df = self._load_data()
+        else:
+            df = None
+
+        df = comm.bcast(df, root=0)
+
+        num_rows = len(df)
+        rows_per_process = num_rows // size
+        start = rank * rows_per_process
+        end = start + rows_per_process if rank != size - 1 else num_rows
+
+        results: List[Dict[str, Any]] = []
+        for _, row in df.iloc[start:end].iterrows():
+            file_name: str = row.at["file_name"]
+            original_size = row.at["uncompressed_size"]
+            ocratio = row.at["npz_compression_ratio"]
+            xside = int(np.sqrt(original_size / 3))
+
+            # synthetics
+            sfile_name: str = "synthetic-" + str(file_name)
+
+            synthetic_image = DeflateDataGenerator.generate_synthetic_image(
+                ocratio, xside
+            )
+
+            Compressions.compress(
+                sfile_name, synthetic_image, ["npz"], self.save_path, remove=False
+            )
+
+class DataGenerator_v2:
+    ACCEPTED_COMPRESSION_TYPES = ["npz", "jpg"]
+
+    def __init__(
+            self, input_compression_ratio: float, num_files: int, dataset_size: int, compression_type: str, save_path="./generated_files"
+    ):
+
+        self.compression_ratio = input_compression_ratio
+        self.num_files = num_files
+        self.dimx: int = np.sqrt( (dataset_size / num_files) / 3).astype(np.int32)
+        self.compression_type: str = compression_type
+        self.save_path = save_path
+
+    def _validations(self):
+        Validations.validate_compression_types(
+            DataGenerator_v1.ACCEPTED_COMPRESSION_TYPES, [self.compression_type]
+        )
+
+
+    def generate_deflate(self):
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+        size = comm.Get_size()
+
+
+        num_rows = self.num_files
+        rows_per_process = num_rows // size
+        start = rank * rows_per_process
+        end = start + rows_per_process if rank != size - 1 else num_rows
+
+        results: List[Dict[str, Any]] = []
+        for _, row in df.iloc[start:end].iterrows():
+            file_name: str = row.at["file_name"]
+            original_size = row.at["uncompressed_size"]
+            ocratio = row.at["npz_compression_ratio"]
+            xside = int(np.sqrt(original_size / 3))
+
+            # synthetics
+            sfile_name: str = "synthetic-" + str(file_name)
+
+            synthetic_image = DeflateDataGenerator.generate_synthetic_image(
+                ocratio, xside
+            )
+
+            Compressions.compress(
+                sfile_name, synthetic_image, ["npz"], self.save_path, remove=False
+            )
 
 ############################ testing ###################################333
 
 
 def test_run():
 
-    test_path = "./results/20240603T170344==localtest--5-processed-images-results.csv"
+    test_path = "./results/20240613T131612==localtest--5-processed-images-new-entropy-calc-results.csv"
 
     import pandas as pd
 
     df = pd.read_csv(test_path)
     df = df.reset_index()  # make sure indexes pair with number of rows
+
+    save_path = "./generated_files"
 
     results = []
 
@@ -205,7 +292,7 @@ def test_run():
         synthetic_image = DeflateDataGenerator.generate_synthetic_image(cratio, xside)
 
         result = Compressions.compress_and_calculate(
-            fname, synthetic_image, dimensions, ["npz"], "localtest"
+            fname, synthetic_image, dimensions, ["npz"], save_path
         )
         result["file_name"] = fname
 
@@ -222,10 +309,9 @@ def test_run():
 
 if __name__ == "__main__":
 
-    test_path = (
-        "./results/20240626T192336==3=eagleimagenet--30000-processed-images-results.csv"
-    )
+    data_path = "./results/20240626T192336==3=eagleimagenet--30000-processed-images-results.csv"
     compression_types = ["npz"]
     source = "eagleimagenet"
-    dgen = DataGenerator_v1(test_path, compression_types, source)
-    dgen.generate_deflate()
+    save_path = "./generated_files/synthetic"
+    dgen = DataGenerator_v1(data_path, compression_types, source, save_path=save_path)
+    dgen.generate_deflate_nonanalysis()

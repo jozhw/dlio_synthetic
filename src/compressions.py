@@ -33,18 +33,21 @@ class Compressions:
         file_type: str,
         filename: str,
         image: np.ndarray,
-        source: str,
         path: str,
     ) -> Path:
         if file_type == "npz":
 
-            compressed_image_path = FileNamingTool.generate_filename(
-                path, filename, "npz", source
+            compressed_image_path = FileNamingTool.generate_raw_filename(
+                path,
+                filename,
+                "npz",
             )
             Compressions._compress_to_npz(compressed_image_path, image)
         elif file_type == "jpg":
-            compressed_image_path = FileNamingTool.generate_filename(
-                path, filename, "jpg", source
+            compressed_image_path = FileNamingTool.generate_raw_filename(
+                path,
+                filename,
+                "jpg",
             )
             Compressions._compress_to_jpg(compressed_image_path, image)
         else:
@@ -61,9 +64,8 @@ class Compressions:
         image: np.ndarray,
         dimensions: Tuple,
         compression_types: List[str],
-        source,
+        path,
         remove: bool = True,
-        path="./generated_files",
     ) -> Dict[str, Any]:
 
         result: Dict[str, Any] = {}
@@ -79,7 +81,7 @@ class Compressions:
             # run the wrapper, where the compressed image will be generated
             # for the specified compression_type
             compressed_path: Path = Compressions._compression_types_wrapper(
-                compression_type, filename, image, source, path
+                compression_type, filename, image, path
             )
 
             # calculate the compression ratio
@@ -98,3 +100,25 @@ class Compressions:
                 Removing.remove_compressed_imgs(compressed_path)
 
         return result
+
+    @staticmethod
+    def compress(
+        filename: str,
+        image: np.ndarray,
+        compression_types: List[str],
+        path,
+        remove: bool = True,
+    ) -> int:
+
+        for compression_type in compression_types:
+
+            # run the wrapper, where the compressed image will be generated
+            # for the specified compression_type
+            compressed_path: Path = Compressions._compression_types_wrapper(
+                compression_type, filename, image, path
+            )
+
+            if remove:
+                Removing.remove_compressed_imgs(compressed_path)
+
+        return 0
