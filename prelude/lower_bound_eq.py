@@ -30,7 +30,7 @@ def find_inverse_model(x: np.ndarray, y: np.ndarray, model):
 
 
 if __name__ == "__main__":
-    path = "./results/20240605T052200==1c=eagleimagenet--300000-rand-processed-images-results.csv"
+    path = "./results/20240605T052200==1c--300000-rand-processed-images-results.csv"
     df = pd.read_csv(path)
     x = np.array(df["entropy"])
     y = np.array(df["npz_compression_ratio"])
