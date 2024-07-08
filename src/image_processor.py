@@ -641,7 +641,7 @@ class ImageProcessor:
 
 if __name__ == "__main__":
     # json_path = "./results/image_paths/test_paths.json"
-    json_path = "../results/image_paths/20240625T202523==3=eagleimagenet--imagenet-rand-30000.json"
+    json_path = "./results/image_paths/20240625T202523==3=eagleimagenet--imagenet-rand-30000.json"
 
     compression_types = ["npz"]
 
