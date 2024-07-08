@@ -528,14 +528,91 @@ class EntropyCompressionRatioPlots:
 
         plt.show()
 
+    @staticmethod
+    def graph_loading_time_comparision_plot(
+        original_data: str, synthetic_data: str, compression_type: str, source: str
+    ):
+        def function(x):
+            return x 
+
+        x = np.array(np.arange(0.1, 8, 0.1))
+        y = function(x)
+        y1 = y + 0.1
+        y2 = y - 0.1
+
+        # if it is a synthetic image, then the naming of the file should
+        # have synthetic in it
+
+        odf = pd.read_csv(original_data)
+        sdf = pd.read_csv(synthetic_data)
+
+        fname = "original-and-synthetic-imgs-npz-loading-plot.png".format(
+        )
+        ptitle = "Original and Synthetic Lossless (Deflate) Loading for NPZ Images".format(
+        )
+
+        save_fname = FileNamingTool.generate_filename(
+            "./results/plots", fname, "png", source
+        )
+
+        # get the specific name of the compression_ratio, which the data
+        # has the first part of the naming be the extension of the compresse
+        # file
+       
+
+        # the o prefix indicates original and the s indicates synthetic
+
+        oloading = odf["loading_time_sec"]
+        sloading = sdf["loading_time_sec"]
+
+
+        plt.figure(figsize=(12, 8))
+        # graph original images data
+        plt.scatter(oloading, sloading, color="blue", alpha=0.5)
+        # graph synthetic images data
+
+        plt.plot(
+            x,
+            y,
+            label="y=x",
+            color="red",
+            linestyle="dashed",
+        )
+        plt.plot(
+            x,
+            y1,
+            label="y = x + 0.1",
+            color="black",
+            linestyle="dashed",
+        )
+        plt.plot(
+            x,
+            y2,
+            label="y = x - 0.1",
+            color="black",
+            linestyle="dashed",
+        )
+        plt.title(ptitle)
+        plt.xlabel("Loading of Original NPZ")
+        plt.ylabel("Loading of Synthetic NPZ")
+
+        plt.xlim([0.5, 2])
+        plt.ylim([0.5, 2])
+
+        plt.legend(loc="lower right")
+        plt.grid(True)
+
+        plt.savefig(save_fname)
+
+        plt.show()
 
 if __name__ == "__main__":
 
     comparison_paths = [
-        "./results/20240626T192336==3=eagleimagenet--30000-processed-images-results.csv",
-        "./results/20240626T224056==3d--29524-processed-synthetic-images-results.csv",
+        "./results/20240706T001110==localcatsanddogs--original-loading-time.csv",
+        "./results/20240705T234817==localcatsanddogs--synthetic-loading-time.csv",
     ]
 
-    EntropyCompressionRatioPlots.graph_original_and_synthetic_compression_ratio(
-        comparison_paths[0], comparison_paths[1], "npz", "imagenet"
+    EntropyCompressionRatioPlots.graph_loading_time_comparision_plot(
+        comparison_paths[0], comparison_paths[1], "npz", "localcatsanddogs"
     )
