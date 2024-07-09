@@ -53,7 +53,7 @@ if __name__ == "__main__":
     arr = []
     iter = 0
     for _ in range(5):
-        arr.append(get_original_loading_time())
+        arr.append(get_synthetic_loading_time())
 
         iter += 1
 
@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     df = pd.DataFrame(narr, columns=["loading_time_sec"])
 
-    fname = "20000-imgs-5-times-original-loading-time"
+    fname = "20000-imgs-5-times-synthetic-loading-time"
     source = "3=3e"
     fname = FileNamingTool.generate_filename("./results", fname, "csv", source)
 
