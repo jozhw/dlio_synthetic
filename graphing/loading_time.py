@@ -32,7 +32,7 @@ def get_loading_time(paths: List[str]):
 
 def get_synthetic_loading_time():
 
-    synthetic = glob.glob("./generated_files/synthetic/*.npz")[:20000]
+    synthetic = glob.glob("./generated_files/synthetic/*.npz")[:25000]
 
     loading_time = get_loading_time(synthetic)
 
@@ -41,7 +41,7 @@ def get_synthetic_loading_time():
 
 def get_original_loading_time():
 
-    original = glob.glob("./generated_files/original/*.npz")[:20000]
+    original = glob.glob("./generated_files/original/*.npz")[:25000]
 
     loading_time = get_loading_time(original)
 
@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     df = pd.DataFrame(narr, columns=["loading_time_sec"])
 
-    fname = "20000-imgs-5-times-original-loading-time"
+    fname = "25000-imgs-5-times-original-loading-time"
     source = "3=3e"
     fname = FileNamingTool.generate_filename("./results", fname, "csv", source)
 
