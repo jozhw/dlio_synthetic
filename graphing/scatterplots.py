@@ -548,7 +548,7 @@ class EntropyCompressionRatioPlots:
 
         fname = "original-and-synthetic-imgs-npz-loading-plot".format(
         )
-        ptitle = "Original and Synthetic Lossless (Deflate) Loading for NPZ Images".format(
+        ptitle = "Original and Synthetic Lossless (Deflate) Loading Time in Seconds for NPZ Images".format(
         )
 
         save_fname = FileNamingTool.generate_filename(
@@ -593,26 +593,26 @@ class EntropyCompressionRatioPlots:
         #    linestyle="dashed",
         #)
         plt.title(ptitle)
-        plt.xlabel("Loading of Original NPZ")
-        plt.ylabel("Loading of Synthetic NPZ")
+        plt.xlabel("Loading of Original NPZ in Seconds")
+        plt.ylabel("Loading of Synthetic NPZ in Seconds")
 
-        plt.xlim([0, 100])
-        plt.ylim([0, 100])
+        plt.xlim([0, .2])
+        plt.ylim([0, .2])
 
         plt.legend(loc="lower right")
         plt.grid(True)
 
-        plt.savefig(save_fname)
+        #plt.savefig(save_fname)
 
         plt.show()
 
 if __name__ == "__main__":
 
     comparison_paths = [
-        "./results/20240709T164948==3=3e--20000-imgs-5-times-original-loading-time.csv",
-        "./results/20240709T165159==3=3e--20000-imgs-5-times-synthetic-loading-time.csv",
+        "./results/20240709T164034==2=2n--12400-imgs-100-chunk-original-loading-time.csv",
+        "./results/20240709T164018==2=2n--12400-imgs-100-chunk-synthetic-loading-time.csv",
     ]
 
     EntropyCompressionRatioPlots.graph_loading_time_comparision_plot(
-        comparison_paths[0], comparison_paths[1], "npz", "3=3e"
+        comparison_paths[0], comparison_paths[1], "npz", "2=2n"
     )
