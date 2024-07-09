@@ -535,10 +535,10 @@ class EntropyCompressionRatioPlots:
         def function(x):
             return x 
 
-        x = np.array(np.arange(0.1, 8, 0.1))
+        x = np.array(np.arange(0, 100, 0.1))
         y = function(x)
-        y1 = y + 0.1
-        y2 = y - 0.1
+        #y1 = y + 0.1
+        #y2 = y - 0.1
 
         # if it is a synthetic image, then the naming of the file should
         # have synthetic in it
@@ -546,7 +546,7 @@ class EntropyCompressionRatioPlots:
         odf = pd.read_csv(original_data)
         sdf = pd.read_csv(synthetic_data)
 
-        fname = "original-and-synthetic-imgs-npz-loading-plot.png".format(
+        fname = "original-and-synthetic-imgs-npz-loading-plot".format(
         )
         ptitle = "Original and Synthetic Lossless (Deflate) Loading for NPZ Images".format(
         )
@@ -578,26 +578,26 @@ class EntropyCompressionRatioPlots:
             color="red",
             linestyle="dashed",
         )
-        plt.plot(
-            x,
-            y1,
-            label="y = x + 0.1",
-            color="black",
-            linestyle="dashed",
-        )
-        plt.plot(
-            x,
-            y2,
-            label="y = x - 0.1",
-            color="black",
-            linestyle="dashed",
-        )
+        #plt.plot(
+        #    x,
+        #    y1,
+        #    label="y = x + 0.1",
+        #    color="black",
+        #    linestyle="dashed",
+        #)
+        #plt.plot(
+        #    x,
+        #    y2,
+        #    label="y = x - 0.1",
+        #    color="black",
+        #    linestyle="dashed",
+        #)
         plt.title(ptitle)
         plt.xlabel("Loading of Original NPZ")
         plt.ylabel("Loading of Synthetic NPZ")
 
-        plt.xlim([0.5, 2])
-        plt.ylim([0.5, 2])
+        plt.xlim([0, 2])
+        plt.ylim([0, 2])
 
         plt.legend(loc="lower right")
         plt.grid(True)
@@ -609,10 +609,10 @@ class EntropyCompressionRatioPlots:
 if __name__ == "__main__":
 
     comparison_paths = [
-        "./results/20240706T001110==localcatsanddogs--original-loading-time.csv",
-        "./results/20240705T234817==localcatsanddogs--synthetic-loading-time.csv",
+        "./results/20240708T201231==3=3e--200-imgs-1000-times-original-loading-time.csv",
+        "./results/20240708T201527==3=3e--200-imgs-1000-times-synthetic-loading-time.csv",
     ]
 
     EntropyCompressionRatioPlots.graph_loading_time_comparision_plot(
-        comparison_paths[0], comparison_paths[1], "npz", "localcatsanddogs"
+        comparison_paths[0], comparison_paths[1], "npz", "3=3e"
     )
