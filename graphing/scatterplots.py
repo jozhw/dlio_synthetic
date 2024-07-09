@@ -596,8 +596,8 @@ class EntropyCompressionRatioPlots:
         plt.xlabel("Loading of Original NPZ")
         plt.ylabel("Loading of Synthetic NPZ")
 
-        plt.xlim([50, 150])
-        plt.ylim([50, 150])
+        plt.xlim([0, 80])
+        plt.ylim([0, 80])
 
         plt.legend(loc="lower right")
         plt.grid(True)
@@ -609,8 +609,8 @@ class EntropyCompressionRatioPlots:
 if __name__ == "__main__":
 
     comparison_paths = [
-        "./results/20240709T145059==3=3e--10000-imgs-3-times-original-loading-time.csv",
-        "./results/20240709T144238==3=3e--10000-imgs-3-times-synthetic-loading-time.csv",
+        "./results/20240709T162030==3=3e--15000-imgs-5-times-original-loading-time.csv",
+        "./results/20240709T162211==3=3e--15000-imgs-5-times-synthetic-loading-time.csv",
     ]
 
     EntropyCompressionRatioPlots.graph_loading_time_comparision_plot(
