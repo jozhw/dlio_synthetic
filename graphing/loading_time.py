@@ -32,7 +32,7 @@ def get_loading_time(paths: List[str]):
 
 def get_synthetic_loading_time():
 
-    synthetic = glob.glob("./generated_files/synthetic/*.npz")
+    synthetic = glob.glob("./generated_files/synthetic/*.npz")[:1000]
 
     loading_time = get_loading_time(synthetic)
 
@@ -41,7 +41,7 @@ def get_synthetic_loading_time():
 
 def get_original_loading_time():
 
-    original = glob.glob("./generated_files/original/*.npz")
+    original = glob.glob("./generated_files/original/*.npz")[:1000]
 
     loading_time = get_loading_time(original)
 
@@ -51,16 +51,20 @@ def get_original_loading_time():
 if __name__ == "__main__":
 
     arr = []
-
+    iter = 0
     for _ in range(1000):
-        arr.append(get_original_loading_time())
+        arr.append(get_synthetic_loading_time())
+
+        iter += 1
+
+        print(iter)
 
     narr = np.array(arr)
 
     df = pd.DataFrame(narr, columns=["loading_time_sec"])
 
-    fname = "original-loading-time"
-    source = "eagleimagenet30000"
+    fname = "synthetic-loading-time"
+    source = "3=eagleimagenet1000"
     fname = FileNamingTool.generate_filename("./results", fname, "csv", source)
 
     df.to_csv(
