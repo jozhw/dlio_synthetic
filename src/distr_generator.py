@@ -1,8 +1,8 @@
-from typing import List, Dict, Tuple
-from operator import itemgetter
+from typing import List, Dict
 
-import random
 import json
+
+from numpy.typing import NDArray
 
 import pandas as pd
 import numpy as np
@@ -27,37 +27,30 @@ class DistributionGenerator:
 
         return probabilities
 
-
     @staticmethod
     def get_rand_values(
-        probabilities: Dict[str, float], size: int, 
-    ) -> List[str]:
+        probabilities: Dict[str, float],
+        size: int,
+    ) -> NDArray[np.string_]:
 
         rng = np.random.default_rng()
 
-        keys: 	List[str] = [ key for key in probabilities.keys() ]
-        arr = np.array(keys, dtype=object)
+        keys: List[str] = [key for key in probabilities.keys()]
         values: List[float] = [value for value in probabilities.values()]
 
-        print("Keys:", keys)
-        print("Values:", values)
-        print("Sum", sum(values))
+        print("Sum Values", sum(values))
 
-
-        param = rng.choice(arr, size=size, p=values)
-        #key2: List[str] =['1', '2', '3', '4']
-        #prob = 0.5 - 0.1e-05
-        #param = rng.choice(key2, size=10, p=[0.1e-05, prob, 0.2, 0.3])
+        param: NDArray[np.string_] = rng.choice(keys, size=size, p=values)
 
         return param
 
     @staticmethod
     def get_params(
-            df: pd.DataFrame, size: int, cr_type: str = "npz", to_round: int = 3
-    ) -> Dict[str, List[str]]:
+        df: pd.DataFrame, n: int, cr_type: str = "npz", to_round: int = 3
+    ) -> Dict[str, NDArray[np.string_]]:
 
         usizes = df["uncompressed_size"].to_numpy()
-        cr_name = "{}_compression_ratio".format(cr_type)
+        cr_name: str = "{}_compression_ratio".format(cr_type)
         crs = df[cr_name].to_numpy()
 
         # get length of the arrays
@@ -71,15 +64,15 @@ class DistributionGenerator:
             cr: float = round(crs[i], to_round)
             key_cr: str = f"{cr}"
 
-            usize = usizes[i]
+            usize: int = usizes[i]
             # get the xside, which is one side of the square root of the the dimensions
             # to also use for greyscale, if the original size is not divisible by three,
             if usize % 3 != 0:
-                size = usize
+                size: int = usize
 
             # if divisible by three then has rgb channels
             else:
-                size = usize / 3
+                size: int = int(usize / 3)
 
             # get the side size of the to generate synthetic
             dim: int = int(np.sqrt(size))
@@ -98,35 +91,20 @@ class DistributionGenerator:
         dim_probs = DistributionGenerator.calculate_probabilities(occur_dims, l)
         cr_probs = DistributionGenerator.calculate_probabilities(occur_crs, l)
 
-        dim_param = DistributionGenerator.get_rand_values(dim_probs, size)
-        cr_param = DistributionGenerator.get_rand_values(cr_probs, size)
+        dim_param = DistributionGenerator.get_rand_values(dim_probs, n)
+        cr_param = DistributionGenerator.get_rand_values(cr_probs, n)
 
-        params: Dict[str, List[str]] = {
+        params: Dict[str, NDArray[np.string_]] = {
             "dimensions": dim_param,
-            cr_name: cr_param
-            
+            cr_name: cr_param,
         }
 
         return params
 
 
-def generate_x_values(x_occurrences, n):
-    # calculate the total number of occurrences
-    total_x = sum(x_occurrences.values())
-
-    x_probabilities = DistributionGenerator.calculate_probabilities(
-        x_occurrences, total_x
-    )
-
-    # generate the list of values given n
-    x_values = DistributionGenerator.get_rand_values(x_probabilities, n)
-
-    return x_values
-
-
 if __name__ == "__main__":
-    #x_occurrences = {"100": 1, "20": 10, "40": 1}
-    #generated_values = generate_x_values(x_occurrences, 10)
+    # x_occurrences = {"100": 1, "20": 10, "40": 1}
+    # generated_values = generate_x_values(x_occurrences, 10)
 
     df_path = (
         "./results/20240626T192336==3=eagleimagenet--30000-processed-images-results.csv"
