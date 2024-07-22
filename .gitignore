@@ -2,3 +2,5 @@
 
 assets/*images
 generated_files/
+
+**/.DS_Store
