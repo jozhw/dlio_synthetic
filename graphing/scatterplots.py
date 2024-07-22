@@ -514,17 +514,17 @@ class EntropyCompressionRatioPlots:
             color="red",
             linestyle="dashed",
         )
-        plt.title(ptitle)
-        plt.xlabel("Compression Ratio of Original")
-        plt.ylabel("Compression Ratio of Synthetic")
+        plt.title(ptitle, fontsize=32)
+        plt.xlabel("Compression Ratio of Original", fontsize=32, labelpad=12)
+        plt.ylabel("Compression Ratio of Synthetic", fontsize=32, labelpad=12)
 
-        plt.xlim([1, 7])
-        plt.ylim([1, 7])
+        plt.xlim([1, 5])
+        plt.ylim([1, 5])
 
         plt.legend(loc="lower right")
-        plt.grid(True)
+        #plt.grid(True)
 
-        plt.savefig(save_fname)
+        #plt.savefig(save_fname)
 
         plt.show()
 
@@ -592,27 +592,25 @@ class EntropyCompressionRatioPlots:
         #    color="black",
         #    linestyle="dashed",
         #)
-        plt.title(ptitle)
+        plt.title(ptitle, fontsize=14)
         plt.xlabel("Loading of Original NPZ in Seconds")
         plt.ylabel("Loading of Synthetic NPZ in Seconds")
 
-        plt.xlim([0, .2])
-        plt.ylim([0, .2])
+        plt.xlim([0, 1])
+        plt.ylim([0, 1])
 
         plt.legend(loc="lower right")
         plt.grid(True)
 
-        #plt.savefig(save_fname)
+        plt.savefig(save_fname)
 
         plt.show()
 
 if __name__ == "__main__":
 
     comparison_paths = [
-        "./results/20240709T164034==2=2n--12400-imgs-100-chunk-original-loading-time.csv",
-        "./results/20240709T164018==2=2n--12400-imgs-100-chunk-synthetic-loading-time.csv",
+        "./results/20240626T192336==3=eagleimagenet--30000-processed-images-results.csv",
+        "./results/20240626T224056==3d--29524-processed-synthetic-images-results.csv",
     ]
 
-    EntropyCompressionRatioPlots.graph_loading_time_comparision_plot(
-        comparison_paths[0], comparison_paths[1], "npz", "2=2n"
-    )
+    EntropyCompressionRatioPlots.graph_original_and_synthetic_compression_ratio(comparison_paths[0], comparison_paths[1], "npz", "3=3d")
