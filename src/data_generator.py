@@ -419,11 +419,11 @@ def gen_exact_distr_run():
     
     test_path = "./results/20240626T192336==3=eagleimagenet--30000-processed-images-results.csv"
     compression_types = ["npz"]
-    source = "3=3e"
+    source = "3=3f"
     save_path = "./generated_files/synthetic"
     num_files = 29524
     dgen = DataGenerator_v2(test_path, num_files, compression_types[0], source, save_path=save_path)
-    dgen.generate_deflate()
+    dgen.generate_deflate_nonanalysis()
     
 
 if __name__ == "__main__":
