@@ -99,7 +99,7 @@ if __name__ == "__main__":
     df = pd.DataFrame(narr, columns=["loading_time_sec"])
 
     fname = "{}-imgs-seqchunk-original-loading-time".format(arr_length)
-    source = "2=2n"
+    source = "3=3f"
     fname = FileNamingTool.generate_filename("./results", fname, "csv", source)
 
     df.to_csv(

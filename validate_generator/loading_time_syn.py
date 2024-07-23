@@ -105,7 +105,7 @@ if __name__ == "__main__":
     df = pd.DataFrame(narr, columns=["loading_time_sec"])
 
     fname = "{}-imgs-{}-chunk-synthetic-loading-time".format(arr_length, chunk_size)
-    source = "3=3e"
+    source = "3=3f"
     fname = FileNamingTool.generate_filename("./results", fname, "csv", source)
 
     df.to_csv(
