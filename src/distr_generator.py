@@ -38,8 +38,6 @@ class DistributionGenerator:
         keys: List[str] = [key for key in probabilities.keys()]
         values: List[float] = [value for value in probabilities.values()]
 
-        print("Sum Values", sum(values))
-
         param: NDArray[np.string_] = rng.choice(keys, size=size, p=values)
 
         return param
@@ -67,8 +65,9 @@ class DistributionGenerator:
             usize: int = usizes[i]
             # get the xside, which is one side of the square root of the the dimensions
             # to also use for greyscale, if the original size is not divisible by three,
+            # currently does not work with rest of the generator
             if usize % 3 != 0:
-                size: int = usize
+                size: int = int(usize / 3)
 
             # if divisible by three then has rgb channels
             else:
@@ -103,8 +102,6 @@ class DistributionGenerator:
 
 
 if __name__ == "__main__":
-    # x_occurrences = {"100": 1, "20": 10, "40": 1}
-    # generated_values = generate_x_values(x_occurrences, 10)
 
     df_path = (
         "./results/20240626T192336==3=eagleimagenet--30000-processed-images-results.csv"
