@@ -421,7 +421,7 @@ def gen_exact_distr_run():
     compression_types = ["npz"]
     source = "3=3e"
     save_path = "./generated_files/synthetic"
-    num_files = 5
+    num_files = 29524
     dgen = DataGenerator_v2(test_path, num_files, compression_types[0], source, save_path=save_path)
     dgen.generate_deflate()
     
