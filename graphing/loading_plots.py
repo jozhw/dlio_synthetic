@@ -89,6 +89,80 @@ class LoadingPlots:
         plt.show()
 
     @staticmethod
+    def graph_loading_chunk_comparison_bar(
+        original_data: str,
+        synthetic_data: str,
+        total_imgs: int,
+        compression_type: str,
+        source: str,
+        save: bool = False,
+    ):
+
+        odf = pd.read_csv(original_data)
+        oloading = odf["loading_time_sec"]
+
+        sdf = pd.read_csv(synthetic_data)
+        sloading = sdf["loading_time_sec"]
+
+        size = len(oloading)
+
+        oload_toplot = []
+        sload_toplot = []
+        index = []
+
+        i2 = 0
+
+        for i in range(10):
+
+            oload_toplot.append(oloading[i])
+            sload_toplot.append(sloading[i])
+
+            i2 += 1
+            index.append(i2)
+
+
+        # serves as the x axis
+        i = np.arange(1, size + 1)
+
+        dfl = pd.DataFrame({
+            
+            "Original Compressed Image": oload_toplot,
+            "Synthetic Compressed Image": sload_toplot
+
+        }, index=index)
+
+
+        if size != len(sloading):
+            raise ValueError(
+                "The datasets should be the save length. Got {} for the original and {} for the synthetic".format(
+                    size, len(sloading)
+                )
+            )
+
+        fname = "{}-original-and-synthetic-{}-compressed-chunk-loading-bar-plot".format(
+            total_imgs, compression_type
+        )
+        ptitle = "Original and Synthetic Lossless ({}) Loading Time for a total of {} Images".format(
+            compression_type, total_imgs
+        )
+
+        save_fname = FileNamingTool.generate_filename(
+            "./results/plots", fname, "png", source
+        )
+
+        #plt.rc('xtick',labelsize=12)
+        #plt.rc('ytick',labelsize=12)
+        dfl.plot.bar(rot=0, figsize=(12,8))
+        # plt.title(ptitle, fontsize=20, pad=20)
+        plt.xlabel("Chunk Index (chunk size = 100)", fontsize=32, labelpad=12)
+        plt.ylabel("Loading Time (seconds)", fontsize=32, labelpad=12)
+        plt.tight_layout(pad=2)
+
+        if save:
+            plt.savefig(save_fname)
+
+        plt.show()
+    @staticmethod
     def graph_loading_seqchunk_comparison(
         original_data: str,
         synthetic_data: str,
@@ -156,7 +230,9 @@ class LoadingPlots:
         total_imgs: int,
         compression_type: str,
         source: str,
+        chunk_size: int = 25,
         save: bool = False,
+
     ):
 
         odf = pd.read_csv(original_data)
@@ -171,9 +247,9 @@ class LoadingPlots:
         sload_toplot = []
         index = []
 
-        step = 25
+        step = chunk_size
         i2 = 0
-        for i in range(24, size, step):
+        for i in range(chunk_size - 1, size, step):
 
             if i2 == 0:
                 oload_toplot.append(oloading[i])
@@ -219,7 +295,7 @@ class LoadingPlots:
         #plt.rc('ytick',labelsize=12)
         dfl.plot.bar(rot=0, figsize=(12,8))
         # plt.title(ptitle, fontsize=20, pad=20)
-        plt.xlabel("Chunk Index (chunk size = 25)", fontsize=32, labelpad=12)
+        plt.xlabel("Chunk Index (chunk size = {})".format(chunk_size), fontsize=32, labelpad=12)
         plt.ylabel("Loading Time (seconds)", fontsize=32, labelpad=12)
         plt.tight_layout(pad=2)
 
@@ -233,20 +309,27 @@ class LoadingPlots:
 if __name__ == "__main__":
 
     comparison_paths = {
-        "ochunk1": "./results/20240709T220046==3=3d5--29000-imgs-100-chunk-original-loading-time.csv",
-        "ochunk2": "./results/20240710T000111==3=3d5a--29000-imgs-100-chunk-original-loading-time.csv",
-        "schunk1": "./results/20240709T220252==3=3d5--29000-imgs-100-chunk-synthetic-loading-time.csv",
-        "schunk2": "./results/20240709T235904==3=3d5a--29000-imgs-100-chunk-synthetic-loading-time.csv",
-        "oseqchunk": "./results/20240710T003254==3=3d6--29000-imgs-seqchunk-original-loading-time.csv",
-        "sseqchunk": "./results/20240710T003504==3=3d6--29000-imgs-seqchunk-synthetic-loading-time.csv",
+        "ochunk1": "./results/20240723T013401==3=3f1--29000-imgs-100-chunk-original-loading-time.csv",
+        "schunk1": "./results/20240723T013610==3=3f1--29000-imgs-100-chunk-synthetic-loading-time.csv",
+        "oseqchunk": "./results/20240723T021905==3=3f2--29000-imgs-seqchunk-original-loading-time.csv",
+        "sseqchunk": "./results/20240723T021658==3=3f2--29000-imgs-seqchunk-synthetic-loading-time.csv",
     }
     LoadingPlots.graph_loading_seqchunk_comparison(
         comparison_paths["oseqchunk"],
         comparison_paths["sseqchunk"],
         29000,
         "npz",
-        source="3=3d6",
+        source="3=3f2",
         save=False
+    )
+
+    LoadingPlots.graph_loading_chunk_comparison_bar(
+        comparison_paths["ochunk1"],
+        comparison_paths["schunk1"],
+        29000,
+        "npz",
+        source="3=3f1",
+        save=True
     )
 
     LoadingPlots.graph_loading_seqchunk_comparison_bar(
@@ -254,23 +337,8 @@ if __name__ == "__main__":
         comparison_paths["sseqchunk"],
         29000,
         "npz",
-        source="3=3d6",
+        source="3=3f2",
+        chunk_size=50,
         save=True
     )
-    LoadingPlots.graph_loading_chunk_comparison(
-        comparison_paths["ochunk1"],
-        comparison_paths["schunk1"],
-        29000,
-        "npz",
-        source="3=3d5",
-        save=False
-    )
 
-    LoadingPlots.graph_loading_chunk_comparison(
-        comparison_paths["ochunk2"],
-        comparison_paths["schunk2"],
-        29000,
-        "npz",
-        source="3=3d5a",
-        save=False
-    )

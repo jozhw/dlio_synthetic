@@ -62,15 +62,15 @@ class NPZLoadingErrors:
     @staticmethod
     def run():
 
-        original = "./results/20240709T220046==3=3d5--29000-imgs-100-chunk-original-loading-time.csv"
-        synthetic = "./results/20240709T220252==3=3d5--29000-imgs-100-chunk-synthetic-loading-time.csv"
+        original = "./results/20240723T013401==3=3f1--29000-imgs-100-chunk-original-loading-time.csv"
+        synthetic = "./results/20240723T013610==3=3f1--29000-imgs-100-chunk-synthetic-loading-time.csv"
 
         err = NPZLoadingErrors(original, synthetic)
         results = err.individual_loading_error()
 
         df = pd.DataFrame(results)
         df.to_csv(
-            "./results/==3=3d5--synthetic-npz-compressed-loading-error.csv",
+            "./results/==3=3f1--exact-distr-synthetic-npz-compressed-loading-error.csv",
             header=["error"],
             index=False,
         )

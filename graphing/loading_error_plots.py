@@ -103,4 +103,4 @@ class LoadingErrorPlots:
 
 
 if __name__ == "__main__":
-    LoadingErrorPlots.graph_histo("./results/20240710T231232==3=3d5--synthetic-npz-compressed-loading-error.csv", "3=3d5",save=True)
+    LoadingErrorPlots.graph_histo("./results/20240723T091634==3=3f1--exact-distr-synthetic-npz-compressed-loading-error.csv", "3=3f1",save=True)

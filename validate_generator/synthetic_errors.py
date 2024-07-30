@@ -62,24 +62,37 @@ class NPZErrors:
     def npz_compressed_sums_error(self):
 
         sum_ocompressed_size = sum(self.odf["npz_compressed_image_size"])
+        sum_ouncompressed_size= sum(self.odf["uncompressed_size"])
         sum_scompressed_size = sum(self.sdf["npz_compressed_image_size"])
+        sum_suncompressed_size= sum(self.sdf["uncompressed_size"])
+
+        udiff = sum_suncompressed_size - sum_ouncompressed_size
+
+        uerror = udiff / sum_ouncompressed_size * 100
 
         diff = sum_scompressed_size - sum_ocompressed_size
 
-        error = diff / sum_ocompressed_size
+        error = diff / sum_ocompressed_size * 100
         print(f"The original compressed dataset size is: {sum_ocompressed_size}")
         print(f"The synthetic compressed dataset size is: {sum_scompressed_size}")
         print(
             f"The difference between the synthetic and original compressed dataset size is: {diff}"
         )
-        print(f"The error is: {error}")
-        return (
-            sum_ocompressed_size,
-            sum_scompressed_size,
-            diff,
-            error,
-            self.num_files,
-        )
+        print(f"The error percent is: {error}")
+
+        results = {
+            "total_original_uncompressed_size": sum_ouncompressed_size,
+            "total_synthetic_uncompressed_size": sum_suncompressed_size,
+            "uncompressed_size_difference": udiff,
+            "uncompressed_size_error_percent": uerror,
+            "total_original_compressed_size": sum_ocompressed_size,
+            "total_synthetic_compressed_size": sum_scompressed_size,
+            "compressed_size_difference": diff,
+            "compressed_size_error_percent": error,
+            "number_of_files_each": self.num_files, 
+            
+        }
+        return results
 
     @staticmethod
     def run():
@@ -97,6 +110,24 @@ class NPZErrors:
             header=["error"],
             index=False,
         )
+
+    @staticmethod
+    def run_exact_distr():
+        
+        original = "./results/20240626T192336==3=eagleimagenet--30000-processed-images-results.csv"
+        synthetic = "./results/20240723T011532==3=3e--29524-processed-synthetic-images-results.csv"
+
+        err = NPZErrors(original, synthetic)
+        results = err.npz_compressed_sums_error()
+
+        print(results)
+
+        #df = pd.DataFrame(results)
+        #df.to_csv(
+        #    "./results/synthetic-compression-ratio-error.csv",
+        #    header=["error"],
+        #    index=False,
+        #)
 
     @staticmethod
     def graph_scatter(path_error_data):
@@ -181,4 +212,5 @@ class NPZErrors:
 
 
 if __name__ == "__main__":
-    NPZErrors.graph_scatter("./results/synthetic-compression-ratio-error.csv")
+    NPZErrors.run_exact_distr()
+    #NPZErrors.graph_scatter("./results/synthetic-compression-ratio-error.csv")
