@@ -102,10 +102,10 @@ class EntropyStd:
         plt.scatter(
             target_entropy, ratio, color="blue", alpha=0.5, marker="o", linestyle="-"
         )
-        plt.title("Target Entropy - Estimated Entropy Difference by Target Entropy")
-        plt.xlabel("target_entropy")
-        plt.ylabel("Target Entropy and Estimated Entropy Difference")
-        plt.grid(True)
+        #plt.title("Target Entropy - Estimated Entropy Difference by Target Entropy")
+        plt.xlabel(f"Target Entropy ($H_1$)", fontsize=32, labelpad=12)
+        plt.ylabel(f"Entropy ($H_1$) Difference", fontsize=32, labelpad=12)
+        #plt.grid(True)
 
         fname = FileNamingTool.generate_filename(
             "./results/plots", "target-entropy-diff-plot", "png", "local"
@@ -173,5 +173,5 @@ class PDFEntropy:
 
 
 if __name__ == "__main__":
-    PDFEntropy.graph("./results/20240626T210249==4--results-pdf-to-entropy.csv")
-    #EntropyStd.graph("./results/20240626T210438==local--results-entropy-to-std.csv")
+    #PDFEntropy.graph("./results/20240626T210249==4--results-pdf-to-entropy.csv")
+    EntropyStd.graph("./results/20240626T210438==5--results-entropy-to-std.csv")
