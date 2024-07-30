@@ -159,13 +159,13 @@ class PDFEntropy:
 
         plt.figure(figsize=(12, 8))
         plt.scatter(std, entropy, color="blue", alpha=0.5)
-        plt.title(ptitle)
-        plt.xlabel("Standard Deviation")
-        plt.ylabel("Entropy (E1)")
+        #plt.title(ptitle)
+        plt.xlabel("Standard Deviation", fontsize=32, labelpad=12)
+        plt.ylabel("Entropy (E1)", fontsize=32, labelpad=12)
 
         plt.xlim([0, 100])
 
-        plt.grid(True)
+        #plt.grid(True)
 
         plt.savefig(fname)
 
@@ -173,5 +173,5 @@ class PDFEntropy:
 
 
 if __name__ == "__main__":
-    PDFEntropy.graph("./results/20240626T210249==local--results-pdf-to-entropy.csv")
-    # EntropyStd.graph("./results/20240626T210438==local--results-entropy-to-std.csv")
+    PDFEntropy.graph("./results/20240626T210249==4--results-pdf-to-entropy.csv")
+    #EntropyStd.graph("./results/20240626T210438==local--results-entropy-to-std.csv")
