@@ -34,16 +34,16 @@ def find_inverse_model(x: np.ndarray, y: np.ndarray, model, source, save: bool =
     ptitle = "Entropy and Compression Ratio for {} Images".format(len(x))
 
     plt.figure(figsize=(12, 8))
-    plt.rc('xtick',labelsize=30)
-    plt.rc('ytick',labelsize=30)
     plt.scatter(x, y, color="blue", label="Images with Completely Random Pixel Values")
     plt.plot(x_fit, y_fit, color="red", label=f"Fitted curve: y = {a:.2f} / (x - {h:.2f}) + {k:.2f}")
 
     #plt.title(ptitle, fontsize=20, pad=20)
-    plt.xlabel("Entropy", fontsize=32, labelpad=12)
-    plt.ylabel("Compression Ratio", fontsize=32, labelpad=12)
+    plt.xlabel("Entropy", fontsize=24, labelpad=12)
+    plt.ylabel("Compression Ratio", fontsize=24, labelpad=12)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
     plt.tight_layout(pad=2)
-    plt.legend()
+    plt.legend(prop={'size': 20})
 
     if save:
         plt.savefig(fname)

@@ -154,9 +154,12 @@ class LoadingPlots:
         #plt.rc('ytick',labelsize=12)
         dfl.plot.bar(rot=0, figsize=(12,8))
         # plt.title(ptitle, fontsize=20, pad=20)
-        plt.xlabel("Chunk Index (chunk size = 100)", fontsize=32, labelpad=12)
-        plt.ylabel("Loading Time (seconds)", fontsize=32, labelpad=12)
+        plt.xlabel("Chunk Index (chunk size = 100)", fontsize=24, labelpad=12)
+        plt.ylabel("Loading Time (seconds)", fontsize=24, labelpad=12)
         plt.tight_layout(pad=2)
+        plt.xticks(fontsize=20)
+        plt.yticks(fontsize=20)
+        plt.legend(prop={'size': 20})
 
         if save:
             plt.savefig(save_fname)
@@ -215,7 +218,7 @@ class LoadingPlots:
         plt.xlabel("Number of Files per Chunk")
         plt.ylabel("Loading Time per Chunk (seconds)")
 
-        plt.legend(loc="upper left")
+        plt.legend(loc="upper left", prop={'size': 20})
         plt.grid(True)
 
         if save:
@@ -295,8 +298,10 @@ class LoadingPlots:
         #plt.rc('ytick',labelsize=12)
         dfl.plot.bar(rot=0, figsize=(12,8))
         # plt.title(ptitle, fontsize=20, pad=20)
-        plt.xlabel("Chunk Index (chunk size = {})".format(chunk_size), fontsize=32, labelpad=12)
-        plt.ylabel("Loading Time (seconds)", fontsize=32, labelpad=12)
+        plt.xlabel("Chunk Index (chunk size = {})".format(chunk_size), fontsize=24, labelpad=12)
+        plt.ylabel("Loading Time (seconds)", fontsize=24, labelpad=12)
+        plt.xticks(fontsize=20)
+        plt.yticks(fontsize=20)
         plt.tight_layout(pad=2)
 
         if save:
@@ -339,6 +344,6 @@ if __name__ == "__main__":
         "npz",
         source="3=3f2",
         chunk_size=50,
-        save=True
+        save=False
     )
 

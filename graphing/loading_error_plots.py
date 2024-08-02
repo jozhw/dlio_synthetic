@@ -73,28 +73,30 @@ class LoadingErrorPlots:
         std = np.std(arr)
 
         plt.figure(figsize=(12, 8))
-        plt.hist(arr, bins=100, range=(-25, 25), color="red", alpha=0.5)
-        plt.axvline(x=0, color="black", linestyle=(0, (1, 10)), label="error = 0%")
-        plt.axvline(x=5, color="black", linestyle="dotted", label="error = 5%")
-        plt.axvline(x=-5, color="black", linestyle="dotted")
-        plt.title("Lossless NPZ (Deflate) Synthetic Image Loading Time Error Percent", fontsize=20, pad=20)
-        plt.legend(loc="upper right")
-        plt.xlabel("Loading Time Relative Difference (%) with Chunk Size of 100", fontsize=18, labelpad=15)
-        plt.ylabel("Occurance", fontsize=18, labelpad=15)
+        plt.hist(arr, bins=50, range=(-25, 25), color="red", alpha=0.5)
+        plt.axvline(x=0, color="black", linestyle=(0, (1, 10)), label="error = 0%", linewidth=4)
+        plt.axvline(x=5, color="black", linestyle="dotted", label="error = 5%", linewidth=4)
+        plt.axvline(x=-5, color="black", linestyle="dotted", linewidth=4)
+        #plt.title("Lossless NPZ (Deflate) Synthetic Image Loading Time Error Percent", fontsize=24, pad=15)
+        plt.legend(loc="upper right", fontsize=20)
+        plt.xlabel("Loading Time Relative Difference (%) with Chunk Size of 100", fontsize=24, labelpad=12)
+        plt.ylabel("Occurance", fontsize=24, labelpad=12)
+        plt.xticks(fontsize=20)
+        plt.yticks(fontsize=20)
 
         # Create a string with the statistical values
         stats_str = f"Mean: {x:.4f}\nStd Dev: {std:.4f}\nVariance: {var_x:.4f}\nMinimum: {min:.4f}\nMaximum: {max:.4f}\n25th Percentile: {q1:.4f}\n75th Percentile: {q3:.4f}"
 
-        # Add the description box with statistical values
-        plt.text(
-            0.05,
-            0.95,
-            stats_str,
-            transform=plt.gca().transAxes,
-            fontsize=10,
-            verticalalignment="top",
-            bbox=dict(boxstyle="square", facecolor="wheat", alpha=0.5),
-        )
+        # # Add the description box with statistical values
+        # plt.text(
+        #     0.05,
+        #     0.95,
+        #     stats_str,
+        #     transform=plt.gca().transAxes,
+        #     fontsize=10,
+        #     verticalalignment="top",
+        #     bbox=dict(boxstyle="square", facecolor="wheat", alpha=0.5),
+        # )
 
         if save:
             plt.savefig(fname)
